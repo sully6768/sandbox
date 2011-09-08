@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!--
 
@@ -35,7 +33,9 @@
     <description>Provides the OSGi SCR commands</description>
 
     <properties>
-        <scr.packages>*</scr.packages>
+        <felix.scr.annotation.version>1.6.0</felix.scr.annotation.version>
+        <felix.scr.plugin.version>1.7.2</felix.scr.plugin.version>
+        <scr.packages>OSGI-INF/serviceComponents.xml</scr.packages>
         <appendedResourcesDirectory>${basedir}/../../etc/appended-resources</appendedResourcesDirectory>
     </properties>
 
@@ -43,10 +43,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.console</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -66,24 +68,28 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr.annotations</artifactId>
+            <version>${felix.scr.annotation.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.metatype</artifactId>
             <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>1.5.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.sonatype.jline</groupId>
             <artifactId>jline</artifactId>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.fusesource.jansi</groupId>
@@ -91,52 +97,39 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.junit</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <inherited>true</inherited>
                 <configuration>
                     <instructions>
-                        <Export-Package>
-                            !org.apache.karaf.ds.commands*
-                        </Export-Package>
-                        <Import-Package>
-                            org.apache.felix.service.command,
-                            org.apache.felix.gogo.commands,
-                            org.apache.karaf.shell.console,
-                            *
-                        </Import-Package>
-                        <Service-Component>
-                            OSGI-INF/serviceComponents.xml
-                        </Service-Component>
+                        <Service-Component>${scr.packages}</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
-                <version>1.7.0</version>
+                <version>${felix.scr.plugin.version}</version>
                 <executions>
                     <execution>
                         <id>generate-scr-scrdescriptor</id>
                         <goals>
                             <goal>scr</goal>
                         </goals>
-                        <configuration>
-                            <metaTypeName>metatype.xml</metaTypeName>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
 </project>

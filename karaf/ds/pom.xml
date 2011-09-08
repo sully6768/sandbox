@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!--
 
@@ -35,23 +33,30 @@
 
     <properties>
         <scr.packages></scr.packages>
-        <bndlib.version>1.43.0</bndlib.version>
         <felix.scr.version>1.6.0</felix.scr.version>
+        <bndlib.version>1.43.0</bndlib.version>
         <appendedResourcesDirectory>${basedir}/../etc/appended-resources</appendedResourcesDirectory>
     </properties>
 
     <modules>
-        <module>command</module>
+        <!--module>command</module-->
         <module>commands</module>
+        <module>management</module>
         <module>example</module>
+        <module>feature</module>
     </modules>
-    
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.scr</artifactId>
                 <version>${felix.scr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.metatype</artifactId>
+                <version>${felix.metatype.version}</version>
             </dependency>
             <dependency>
                 <groupId>biz.aQute</groupId>

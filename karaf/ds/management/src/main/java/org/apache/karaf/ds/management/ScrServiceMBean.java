@@ -14,26 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.commands.completer;
+package org.apache.karaf.ds.management;
 
-import org.apache.felix.scr.Component;
+import javax.management.openmbean.TabularData;
 
-/**
- *
- */
-public class DeactivateCompleter extends ScrCompleterSupport {
-
-    /**
-     * Overrides the super method noted below. See super documentation
-     * for details.
-     * 
-     * @see org.apache.karaf.ds.commands.completer.ScrCompleterSupport#availableComponent(org.apache.felix.scr.Component)
-     */
-    @Override
-    public boolean availableComponent(Component component) throws Exception {
-        boolean retVal =
-                (component != null && component.getState() == Component.STATE_ACTIVE);
-        return retVal;
-    }
-
+public interface ScrServiceMBean {
+    TabularData listComponents() throws Exception;
+    
+    void activateComponent(String componentName) throws Exception;
+    
+    void deactiveateComponent(String componentName) throws Exception;
 }

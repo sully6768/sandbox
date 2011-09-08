@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!--
-
         Licensed to the Apache Software Foundation (ASF) under one or more
         contributor license agreements.  See the NOTICE file distributed with
         this work for additional information regarding copyright ownership.
@@ -33,11 +30,42 @@
     <name>Apache Karaf :: DS :: SCR Feature</name>
 
     <description>Provides the Karaf Feature descriptor for the SCR APIs and Shell Commands</description>
-
-    <properties>
-        <appendedResourcesDirectory>${basedir}/../../etc/appended-resources</appendedResourcesDirectory>
-    </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.metatype</artifactId>
+            <version>${felix.metatype.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.osgi.core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.osgi.compendium</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.sf.kxml</groupId>
+                    <artifactId>kxml2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.eventadmin</artifactId>
+            <version>${felix.eventadmin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.scr</artifactId>
+            <version>${felix.scr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.ds</groupId>
+            <artifactId>org.apache.karaf.ds.commands</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -58,5 +86,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

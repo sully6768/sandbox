@@ -25,13 +25,15 @@ import org.apache.karaf.shell.console.Completer;
 /**
  * 
  */
-@Component(name = ListCommandComponent.COMPONENT_NAME, label = "Apache Karaf SCR List Command", enabled = true, immediate = true, metatype = true)
+@Component(name = ListCommandComponent.COMPONENT_NAME, label = ListCommandComponent.COMPONENT_LABEL, enabled = true, immediate = true, metatype = true)
 @Properties({
-        @Property(name = DsCommandConstants.OSGI_COMMAND_SCOPE_KEY, value = {DsCommandConstants.SCR_COMMAND}, propertyPrivate = true),
-        @Property(name = DsCommandConstants.OSGI_COMMAND_FUNCTION_KEY, value = {DsCommandConstants.LIST_FUNCTION}, propertyPrivate = true)})
+        @Property(name = DsCommandConstants.OSGI_COMMAND_SCOPE_KEY, value = { DsCommandConstants.SCR_COMMAND }, propertyPrivate = true),
+        @Property(name = DsCommandConstants.OSGI_COMMAND_FUNCTION_KEY, value = { DsCommandConstants.LIST_FUNCTION }, propertyPrivate = true) })
 public class ListCommandComponent extends ScrCommandSupport {
 
     public static final String COMPONENT_NAME = "ListCommand";
+    public static final String COMPONENT_LABEL =
+            "Apache Karaf SCR List Command";
 
     @Override
     public Class<? extends Action> getActionClass() {
