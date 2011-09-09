@@ -32,7 +32,10 @@ public class ActivateCompleter extends ScrCompleterSupport {
     @Override
     public boolean availableComponent(Component component) throws Exception {
         boolean retVal =
-                (component != null && component.getState() != Component.STATE_ACTIVE);
+                (component != null 
+                && component.getState() != Component.STATE_ACTIVE
+                && component.getState() == Component.STATE_DISABLED 
+                && !component.getName().endsWith("Command"));
         return retVal;
     }
 

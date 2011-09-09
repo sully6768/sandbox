@@ -113,7 +113,7 @@
                 <inherited>true</inherited>
                 <configuration>
                     <instructions>
-                        <Service-Component>${scr.packages}</Service-Component>
+                        <Service-Component>OSGI-INF/serviceComponents.xml</Service-Component>
                     </instructions>
                 </configuration>
             </plugin>
