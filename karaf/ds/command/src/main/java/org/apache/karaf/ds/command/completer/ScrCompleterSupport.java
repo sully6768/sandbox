@@ -36,7 +36,6 @@ public abstract class ScrCompleterSupport implements Completer {
      * @see org.apache.karaf.shell.console.Completer#complete(java.lang.String,
      *      int, java.util.List)
      */
-    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {

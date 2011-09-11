@@ -91,7 +91,6 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
      * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#listComponents()
      */
-    @Override
     public String[] listComponents() throws Exception {
         Component[] components = scrService.getComponents();
         String[] componentNames = new String[components.length];
@@ -107,7 +106,6 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
      * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#activateComponent(java.lang.String)
      */
-    @Override
     public void activateComponent(String componentName) throws Exception {
         if (scrService.getComponents(componentName) != null) {
             Component[] components = scrService.getComponents(componentName);
@@ -123,7 +121,6 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
      * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#deactiveateComponent(java.lang.String)
      */
-    @Override
     public void deactiveateComponent(String componentName) throws Exception {
         if (scrService.getComponents(componentName) != null) {
             Component[] components = scrService.getComponents(componentName);

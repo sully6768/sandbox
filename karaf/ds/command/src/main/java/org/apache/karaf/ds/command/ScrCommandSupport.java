@@ -89,7 +89,6 @@ public abstract class ScrCommandSupport extends AbstractCommand implements
      * 
      * @see org.apache.karaf.shell.console.CompletableFunction#getCompleters()
      */
-    @Override
     public List<Completer> getCompleters() {
         List<Completer> completers = null;
 
