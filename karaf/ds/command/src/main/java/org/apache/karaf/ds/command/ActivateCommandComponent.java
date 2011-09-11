@@ -28,7 +28,9 @@ import org.apache.karaf.shell.console.Completer;
  */
 @Component(
         name = ActivateCommandComponent.COMPONENT_NAME, 
-        label = ActivateCommandComponent.COMPONENT_LABEL)
+        label = ActivateCommandComponent.COMPONENT_LABEL,
+        enabled = true, 
+        immediate = true)
 @Property(
         name = DsCommandConstants.OSGI_COMMAND_FUNCTION_KEY, 
         value = {DsCommandConstants.ACTIVATE_FUNCTION}, 
