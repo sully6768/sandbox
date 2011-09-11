@@ -36,9 +36,17 @@ import org.apache.karaf.management.MBeanRegistrer;
 /**
  *
  */
-@org.apache.felix.scr.annotations.Component(enabled = true, immediate = true)
+@org.apache.felix.scr.annotations.Component(
+        name = ScrServiceMBeanImpl.COMPONENT_NAME, 
+        label = ScrServiceMBeanImpl.COMPONENT_LABEL, 
+        enabled = true, 
+        immediate = true)
 public class ScrServiceMBeanImpl extends StandardMBean implements
         ScrServiceMBean {
+
+    public static final String COMPONENT_NAME = "ScrServiceMBean";
+
+    public static final String COMPONENT_LABEL = "Apache Karaf SCR Service MBean";
 
     @Reference
     private MBeanServer mBeanServer;
