@@ -28,7 +28,7 @@ import org.apache.karaf.shell.console.Completer;
  */
 @Component(
         name = DeactivateCommandComponent.COMPONENT_NAME, 
-        label = "Apache Karaf SCR Deactivate Command", 
+        label = DeactivateCommandComponent.COMPONENT_LABEL, 
         enabled = true, 
         immediate = true)
 @Property(
