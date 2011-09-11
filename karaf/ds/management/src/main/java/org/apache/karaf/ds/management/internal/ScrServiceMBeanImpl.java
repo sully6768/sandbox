@@ -32,6 +32,8 @@ import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.karaf.ds.management.ScrServiceMBean;
 import org.apache.karaf.management.MBeanRegistrer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -47,6 +49,8 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
     public static final String COMPONENT_NAME = "ScrServiceMBean";
 
     public static final String COMPONENT_LABEL = "Apache Karaf SCR Service MBean";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScrServiceMBeanImpl.class);
 
     @Reference
     private MBeanServer mBeanServer;
@@ -69,6 +73,7 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
 
     @Activate
     public void activate() throws Exception {
+        LOGGER.info("Activating the " + getComponentLabel());
         Map<Object, String> mbeans = new HashMap<Object, String>();
         String karafName = System.getProperty("karaf.name", "root");
         mbeans.put(this, "org.apache.karaf:type=scr,name=" + karafName);
@@ -84,6 +89,7 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
 
     @Deactivate
     public void deactivate() throws Exception {
+        LOGGER.info("Deactivating the " + getComponentLabel());
         try {
             lock.writeLock().lock();
             mBeanRegistrer.unregisterMBeanServer(mBeanServer);
@@ -136,6 +142,10 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
                 component.disable();
             }
         }
+    }
+    
+    public String getComponentLabel() {
+        return COMPONENT_LABEL;
     }
 
 }
