@@ -11,29 +11,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.apache.karaf.ds.commands;
+package org.apache.karaf.ds.command;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.felix.gogo.commands.Action;
 import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Properties;
 import org.apache.felix.scr.annotations.Property;
-import org.apache.karaf.ds.commands.action.DeactivateAction;
-import org.apache.karaf.ds.commands.completer.DeactivateCompleter;
+import org.apache.karaf.ds.command.action.DeactivateAction;
+import org.apache.karaf.ds.command.completer.DeactivateCompleter;
 import org.apache.karaf.shell.console.Completer;
 
 /**
- * 
+ * Karaf Shell Command used to deactivate a Declarative Service Component.
  */
-@Component(name = DeactivateCommandComponent.COMPONENT_NAME, label = "Apache Karaf SCR Deactivate Command", enabled = true, immediate = true, metatype = true)
-@Properties({
-        @Property(name = DsCommandConstants.OSGI_COMMAND_SCOPE_KEY, value = {DsCommandConstants.SCR_COMMAND}, propertyPrivate = true),
-        @Property(name = DsCommandConstants.OSGI_COMMAND_FUNCTION_KEY, value = {DsCommandConstants.DEACTIVATE_FUNCTION}, propertyPrivate = true)})
+@Component(
+        name = DeactivateCommandComponent.COMPONENT_NAME, 
+        label = "Apache Karaf SCR Deactivate Command", 
+        enabled = true, 
+        immediate = true)
+@Property(
+        name = DsCommandConstants.OSGI_COMMAND_FUNCTION_KEY, 
+        value = {DsCommandConstants.DEACTIVATE_FUNCTION}, 
+        propertyPrivate = true)
 public class DeactivateCommandComponent extends ScrCommandSupport {
 
     public static final String COMPONENT_NAME = "DeactivateCommand";
+
+    public static final String COMPONENT_LABEL = "Apache Karaf SCR Deactivate Command";
+
+    @Override
+    public String getComponentLabel() {
+        return COMPONENT_LABEL;
+    }
 
     @Override
     public Class<? extends Action> getActionClass() {

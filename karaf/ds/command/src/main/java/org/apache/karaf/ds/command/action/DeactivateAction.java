@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.commands.action;
+package org.apache.karaf.ds.command.action;
 
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
+import org.apache.karaf.ds.command.DsCommandConstants;
 
-@Command(scope = "scr", name = "deactivate", description = "Shut down a component")
+@Command(
+        scope = DsCommandConstants.SCR_COMMAND,
+        name = DsCommandConstants.DEACTIVATE_FUNCTION, 
+        description = "Deactivates a Component for the given name")
 public class DeactivateAction extends ScrActionSupport {
 
     @Argument(index = 0, name = "name", description = "The name of the Component to deactivate ", required = true, multiValued = false)
@@ -29,6 +33,10 @@ public class DeactivateAction extends ScrActionSupport {
 
     @Override
     protected Object doScrAction(ScrService scrService) throws Exception {
+        if(logger.isDebugEnabled()){
+            logger.debug("Deactivate Action");
+            logger.debug("  Deactivating the Component: " + name);
+        }
         Component[] components = scrService.getComponents(name);
         if (components != null && components.length > 0) {
             for (int i = 0; i < components.length; i++) {

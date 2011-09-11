@@ -14,24 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.commands.action;
+package org.apache.karaf.ds.command.action;
 
 import org.apache.felix.scr.ScrService;
 import org.apache.karaf.shell.console.AbstractAction;
+import org.fusesource.jansi.Ansi;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ScrActionSupport extends AbstractAction {
-    protected final Logger log = LoggerFactory.getLogger(ListAction.class);
+    
+    
+    protected final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private ScrService scrService;
 
     @Override
     protected Object doExecute() throws Exception {
         if (scrService == null) {
-            System.out.println("ScrService is unavailable.");
+            String msg = "ScrService is unavailable";
+            System.out.println(msg);
+            logger.warn(msg);
         } else {
             doScrAction(scrService);
         }
@@ -42,8 +47,26 @@ public abstract class ScrActionSupport extends AbstractAction {
             throws Exception;
 
     public boolean isListable(String componentName) {
-        return (componentName != null && !componentName.equals("") && !componentName
-                .endsWith("Command"));
+        return (componentName != null 
+                && !componentName.equals("") 
+                && !componentName.endsWith("Command"));
+    }
+
+    public String getPrettyString(String value, Ansi.Color color) {
+        return Ansi.ansi().fg(color).a(value).toString();
+    }
+
+    public String getPrettyBoldString(String value, Ansi.Color color) {
+        return Ansi.ansi().fg(color).a(Ansi.Attribute.INTENSITY_BOLD).a(value)
+                .a(Ansi.Attribute.INTENSITY_BOLD_OFF).toString();
+    }
+
+    public String buildRightPadBracketDisplay(String s, int max) {
+        return String.format("%1$-" + max + "s", s);
+    }
+
+    public String buildLeftPadBracketDisplay(String s, int max) {
+        return String.format("%1$#" + max + "s", s);
     }
 
     /**

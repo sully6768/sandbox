@@ -18,13 +18,16 @@ package org.apache.karaf.ds.management.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.management.MBeanServer;
-import javax.management.openmbean.TabularData;
+import javax.management.NotCompliantMBeanException;
+import javax.management.StandardMBean;
 
+import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
 import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.karaf.ds.management.ScrServiceMBean;
@@ -33,64 +36,101 @@ import org.apache.karaf.management.MBeanRegistrer;
 /**
  *
  */
-@Component(
-    enabled=true,
-    immediate=true)
-public class ScrServiceMBeanImpl extends MBeanRegistrer implements
+@org.apache.felix.scr.annotations.Component(enabled = true, immediate = true)
+public class ScrServiceMBeanImpl extends StandardMBean implements
         ScrServiceMBean {
-    
+
     @Reference
     private MBeanServer mBeanServer;
-    
+
     @Reference
     private ScrService scrService;
-    
-    @Activate
-    public void activate() throws Exception{
-        Map<Object, String> mbeans = new HashMap<Object, String>();
-        mbeans.put(this, "org.apache.karaf:type=scr,name=karaf.name");
-        this.setMbeans(mbeans);
-        this.registerMBeanServer(mBeanServer);
+
+    private MBeanRegistrer mBeanRegistrer;
+
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    /**
+     * Creates new Declarative Services mbean.
+     * 
+     * @throws NotCompliantMBeanException
+     */
+    public ScrServiceMBeanImpl() throws NotCompliantMBeanException {
+        super(ScrServiceMBean.class);
     }
-    
+
+    @Activate
+    public void activate() throws Exception {
+        Map<Object, String> mbeans = new HashMap<Object, String>();
+        String karafName = System.getProperty("karaf.name", "root");
+        mbeans.put(this, "org.apache.karaf:type=scr,name=" + karafName);
+        try {
+            lock.writeLock().lock();
+            mBeanRegistrer = new MBeanRegistrer();
+            mBeanRegistrer.setMbeans(mbeans);
+            mBeanRegistrer.registerMBeanServer(mBeanServer);
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
     @Deactivate
-    public void deactivate() throws Exception{
-        this.unregisterMBeanServer(mBeanServer);
+    public void deactivate() throws Exception {
+        try {
+            lock.writeLock().lock();
+            mBeanRegistrer.unregisterMBeanServer(mBeanServer);
+            mBeanRegistrer = null;
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     /**
-     * Overrides the super method noted below.  
-     * See super documentation for details.
-     *
+     * Overrides the super method noted below. See super documentation for
+     * details.
+     * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#listComponents()
      */
     @Override
-    public TabularData listComponents() throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    public String[] listComponents() throws Exception {
+        Component[] components = scrService.getComponents();
+        String[] componentNames = new String[components.length];
+        for (int i = 0; i < componentNames.length; i++) {
+            componentNames[i] = components[i].getName();
+        }
+        return componentNames;
     }
 
     /**
-     * Overrides the super method noted below.  
-     * See super documentation for details.
-     *
+     * Overrides the super method noted below. See super documentation for
+     * details.
+     * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#activateComponent(java.lang.String)
      */
     @Override
     public void activateComponent(String componentName) throws Exception {
-        // TODO Auto-generated method stub
-
+        if (scrService.getComponents(componentName) != null) {
+            Component[] components = scrService.getComponents(componentName);
+            for (Component component : components) {
+                component.enable();
+            }
+        }
     }
 
     /**
-     * Overrides the super method noted below.  
-     * See super documentation for details.
-     *
+     * Overrides the super method noted below. See super documentation for
+     * details.
+     * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#deactiveateComponent(java.lang.String)
      */
     @Override
     public void deactiveateComponent(String componentName) throws Exception {
-
+        if (scrService.getComponents(componentName) != null) {
+            Component[] components = scrService.getComponents(componentName);
+            for (Component component : components) {
+                component.disable();
+            }
+        }
     }
 
 }

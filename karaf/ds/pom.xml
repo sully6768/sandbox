@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!--
 
@@ -34,15 +36,14 @@
     <properties>
         <scr.packages></scr.packages>
         <felix.scr.version>1.6.0</felix.scr.version>
-        <bndlib.version>1.43.0</bndlib.version>
+        <felix.scr.annotation.version>1.6.0</felix.scr.annotation.version>
+        <felix.scr.plugin.version>1.7.2</felix.scr.plugin.version>
         <appendedResourcesDirectory>${basedir}/../etc/appended-resources</appendedResourcesDirectory>
     </properties>
 
     <modules>
-        <!--module>command</module-->
-        <module>commands</module>
+        <module>command</module>
         <module>management</module>
-        <module>example</module>
         <module>feature</module>
     </modules>
 
@@ -59,9 +60,9 @@
                 <version>${felix.metatype.version}</version>
             </dependency>
             <dependency>
-                <groupId>biz.aQute</groupId>
-                <artifactId>bndlib</artifactId>
-                <version>${bndlib.version}</version>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.scr.annotations</artifactId>
+                <version>${felix.scr.annotation.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -78,13 +79,19 @@
                         <Service-Component>${scr.packages}</Service-Component>
                     </instructions>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>biz.aQute</groupId>
-                        <artifactId>bndlib</artifactId>
-                        <version>${bndlib.version}</version>
-                    </dependency>
-                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-scr-plugin</artifactId>
+                <version>${felix.scr.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-scr-scrdescriptor</id>
+                        <goals>
+                            <goal>scr</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

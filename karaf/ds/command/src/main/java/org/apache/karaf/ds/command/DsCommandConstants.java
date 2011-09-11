@@ -1,4 +1,4 @@
-package org.apache.karaf.ds.commands;
+package org.apache.karaf.ds.command;
 
 public class DsCommandConstants {
     public static final String OSGI_COMMAND_SCOPE_KEY = "osgi.command.scope";

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.commands.completer;
+package org.apache.karaf.ds.command.completer;
 
 import org.apache.felix.scr.Component;
 
@@ -27,16 +27,14 @@ public class ActivateCompleter extends ScrCompleterSupport {
      * Overrides the super method noted below. See super documentation
      * for details.
      * 
-     * @see org.apache.karaf.ds.commands.completer.ScrCompleterSupport#availableComponent(org.apache.felix.scr.Component)
+     * @see org.apache.karaf.ds.command.completer.ScrCompleterSupport#availableComponent(org.apache.felix.scr.Component)
      */
     @Override
     public boolean availableComponent(Component component) throws Exception {
-        boolean retVal =
-                (component != null 
+        return (component != null 
                 && component.getState() != Component.STATE_ACTIVE
                 && component.getState() == Component.STATE_DISABLED 
                 && !component.getName().endsWith("Command"));
-        return retVal;
     }
 
 }

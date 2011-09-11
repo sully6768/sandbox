@@ -29,7 +29,7 @@
 
     <artifactId>org.apache.karaf.ds.management</artifactId>
     <packaging>bundle</packaging>
-    <name>Apache Karaf :: DS :: Management</name>
+    <name>Apache Karaf :: DS :: SCR Management</name>
     <description>This bundle provides MBeans to manipulate Service Components via JMX.</description>
 
     <properties>
@@ -58,14 +58,13 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.scr.annotations</artifactId>
-            <version>${felix.scr.annotation.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
         	<groupId>org.apache.karaf</groupId>
         	<artifactId>org.apache.karaf.management</artifactId>
         	<version>${project.version}</version>
-        	<type>bundle</type>
-        	<scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -92,14 +91,17 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.ds.management
+                            ${project.artifactId}
                         </Export-Package>
                         <Import-Package>
+                            !${project.artifactId},
                             javax.management,
-                            javax.management.loading
+                            javax.management.loading,
                             *
                         </Import-Package>
-                        <Private-Package>org.apache.karaf.ds.management.internal</Private-Package>
+                        <Private-Package>
+                            ${project.artifactId}.internal
+                        </Private-Package>
                         <Service-Component>${scr.packages}</Service-Component>
                     </instructions>
                 </configuration>

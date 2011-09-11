@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.commands.completer;
+package org.apache.karaf.ds.command.completer;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public abstract class ScrCompleterSupport implements Completer {
      * @see org.apache.karaf.shell.console.Completer#complete(java.lang.String,
      *      int, java.util.List)
      */
-    // @Override
+    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {

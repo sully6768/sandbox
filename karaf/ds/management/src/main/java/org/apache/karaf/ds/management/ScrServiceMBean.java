@@ -16,12 +16,10 @@
  */
 package org.apache.karaf.ds.management;
 
-import javax.management.openmbean.TabularData;
-
 public interface ScrServiceMBean {
-    TabularData listComponents() throws Exception;
-    
+    String[] listComponents() throws Exception;
+
     void activateComponent(String componentName) throws Exception;
-    
+
     void deactiveateComponent(String componentName) throws Exception;
 }
