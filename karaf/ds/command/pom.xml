@@ -34,7 +34,6 @@
 
     <properties>
         <scr.packages>OSGI-INF/serviceComponents.xml</scr.packages>
-        <appendedResourcesDirectory>${basedir}/../../etc/appended-resources</appendedResourcesDirectory>
     </properties>
 
     <dependencies>

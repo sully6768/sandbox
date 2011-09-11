@@ -33,13 +33,15 @@
     <description>This bundle provides MBeans to manipulate Service Components via JMX.</description>
 
     <properties>
-        <felix.scr.annotation.version>1.6.0</felix.scr.annotation.version>
-        <felix.scr.plugin.version>1.7.2</felix.scr.plugin.version>
         <scr.packages>OSGI-INF/serviceComponents.xml</scr.packages>
-        <appendedResourcesDirectory>${basedir}/../../etc/appended-resources</appendedResourcesDirectory>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
