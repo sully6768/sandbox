@@ -45,13 +45,12 @@ public class ListAction extends ScrActionSupport {
                 "   ID   State             Component Name",
                 Ansi.Color.WHITE));
         Component[] components = scrService.getComponents();
-        for (int i = 0; i < components.length; i++) {
-            Component c = components[i];
-            String name = c.getName();
+        for (Component component : ScrUtils.emptyIfNull(Component.class, components)) {
+            String name = component.getName();
             if (isListable(name) || listAll) {
-                String id = buildLeftPadBracketDisplay(c.getId() + "", 4);
+                String id = buildLeftPadBracketDisplay(component.getId() + "", 4);
                 String state = buildRightPadBracketDisplay(
-                        ScrUtils.getState(c.getState()), 16);
+                        ScrUtils.getState(component.getState()), 16);
                 System.out.println(getPrettyString("[", Ansi.Color.WHITE)
                         + getPrettyString(id, Ansi.Color.YELLOW)
                         + getPrettyString("] [", Ansi.Color.WHITE)

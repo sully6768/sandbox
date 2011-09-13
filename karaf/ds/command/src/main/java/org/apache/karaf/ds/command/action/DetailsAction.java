@@ -48,16 +48,14 @@ public class DetailsAction extends ScrActionSupport {
         System.out.println(getPrettyBoldString("Component Details",
                 Ansi.Color.WHITE));
         Component[] components = scrService.getComponents(name);
-        for (int i = 0; i < components.length; i++) {
-            Component c = components[i];
-
-            printDetail("  Name                : ", c.getName());
-            printDetail("  State               : ", ScrUtils.getState(c.getState()));
-            Reference[] references = c.getReferences();
+        for (Component component : ScrUtils.emptyIfNull(Component.class, components)) {
+            printDetail("  Name                : ", component.getName());
+            printDetail("  State               : ", ScrUtils.getState(component.getState()));
+            Reference[] references = component.getReferences();
             System.out.println(getPrettyBoldString("References", Ansi.Color.WHITE)
                     + Ansi.ansi().a(Ansi.Attribute.RESET).toString());
 
-            for (Reference reference : references) {
+            for (Reference reference : ScrUtils.emptyIfNull(Reference.class,references)) {
                 printDetail("  Reference           : ", reference.getName());
                 printDetail("    State             : ", (reference.isSatisfied())?"satisfied":"unsatisfied");
                 printDetail("    Multiple          : ", (reference.isMultiple() ? "multiple" : "single" ));
@@ -66,33 +64,30 @@ public class DetailsAction extends ScrActionSupport {
 
                 // list bound services
                 ServiceReference[] boundRefs = reference.getServiceReferences();
-                if ( boundRefs != null && boundRefs.length > 0 )
-                {
-                    for ( int j = 0; j < boundRefs.length; j++ )
-                    {
-                        final StringBuffer b = new StringBuffer();
-                        b.append( "Bound Service ID " );
-                        b.append( boundRefs[j].getProperty( Constants.SERVICE_ID ) );
+                for (ServiceReference serviceReference : ScrUtils.emptyIfNull(ServiceReference.class, boundRefs)) {
+                    final StringBuffer b = new StringBuffer();
+                    b.append( "Bound Service ID " );
+                    b.append( serviceReference.getProperty( Constants.SERVICE_ID ) );
 
-                        String componentName = ( String ) boundRefs[j].getProperty( ComponentConstants.COMPONENT_NAME );
+                    String componentName = ( String ) serviceReference.getProperty( ComponentConstants.COMPONENT_NAME );
+                    if ( componentName == null )
+                    {
+                        componentName = ( String ) serviceReference.getProperty( Constants.SERVICE_PID );
                         if ( componentName == null )
                         {
-                            componentName = ( String ) boundRefs[j].getProperty( Constants.SERVICE_PID );
-                            if ( componentName == null )
-                            {
-                                componentName = ( String ) boundRefs[j].getProperty( Constants.SERVICE_DESCRIPTION );
-                            }
+                            componentName = ( String ) serviceReference.getProperty( Constants.SERVICE_DESCRIPTION );
                         }
-                        if ( componentName != null )
-                        {
-                            b.append( " (" );
-                            b.append( componentName );
-                            b.append( ")" );
-                        }
-                        printDetail("    Service Reference : ", b.toString());
                     }
+                    if ( componentName != null )
+                    {
+                        b.append( " (" );
+                        b.append( componentName );
+                        b.append( ")" );
+                    }
+                    printDetail("    Service Reference : ", b.toString());
                 }
-                else
+                
+                if(ScrUtils.emptyIfNull(ServiceReference.class, boundRefs).length == 0)
                 {
                     printDetail("    Service Reference : ", "No Services bound");
                 }
@@ -102,6 +97,7 @@ public class DetailsAction extends ScrActionSupport {
     
         return null;
     }
+
 
     private void printDetail(String header, String value) {
         System.out.print(getPrettyBoldString(header, Ansi.Color.WHITE));

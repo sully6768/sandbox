@@ -21,6 +21,7 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
 import org.apache.karaf.ds.command.DsCommandConstants;
+import org.apache.karaf.ds.command.ScrUtils;
 
 @Command(
         scope = DsCommandConstants.SCR_COMMAND,
@@ -38,10 +39,8 @@ public class DeactivateAction extends ScrActionSupport {
             logger.debug("  Deactivating the Component: " + name);
         }
         Component[] components = scrService.getComponents(name);
-        if (components != null && components.length > 0) {
-            for (int i = 0; i < components.length; i++) {
-                components[i].disable();
-            }
+        for (Component component : ScrUtils.emptyIfNull(Component.class, components)) {
+            component.disable();
         }
         return null;
     }
