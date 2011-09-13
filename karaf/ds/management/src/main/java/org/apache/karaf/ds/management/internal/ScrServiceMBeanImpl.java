@@ -100,51 +100,63 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
     }
 
     /**
-     * Overrides the super method noted below. See super documentation for
-     * details.
      * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#listComponents()
      */
     public String[] listComponents() throws Exception {
-        Component[] components = scrService.getComponents();
+        Component[] components = safe(scrService.getComponents());
         String[] componentNames = new String[components.length];
         for (int i = 0; i < componentNames.length; i++) {
             componentNames[i] = components[i].getName();
         }
         return componentNames;
     }
+    
+    /**
+     * 
+     * @see org.apache.karaf.ds.management.ScrServiceMBean#componentState(java.lang.String)
+     */
+    public int componentState(String componentName) throws Exception {
+        int state = -1;
+        Component[] components = scrService.getComponents(componentName);
+        for (Component component : safe(components)) {
+            state = component.getState();
+        }
+        return state;
+    }
 
     /**
-     * Overrides the super method noted below. See super documentation for
-     * details.
      * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#activateComponent(java.lang.String)
      */
     public void activateComponent(String componentName) throws Exception {
         if (scrService.getComponents(componentName) != null) {
             Component[] components = scrService.getComponents(componentName);
-            for (Component component : components) {
+            for (Component component : safe(components)) {
                 component.enable();
             }
         }
     }
 
     /**
-     * Overrides the super method noted below. See super documentation for
-     * details.
      * 
      * @see org.apache.karaf.ds.management.ScrServiceMBean#deactiveateComponent(java.lang.String)
      */
     public void deactiveateComponent(String componentName) throws Exception {
         if (scrService.getComponents(componentName) != null) {
             Component[] components = scrService.getComponents(componentName);
-            for (Component component : components) {
+            for (Component component : safe(components)) {
                 component.disable();
             }
         }
     }
     
-    public String getComponentLabel() {
+    private Component[] safe( Component[] components ) {
+        return components == null ? new Component[0] : components;
+    }
+
+    
+    private String getComponentLabel() {
         return COMPONENT_LABEL;
     }
 

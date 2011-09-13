@@ -18,6 +18,8 @@ package org.apache.karaf.ds.management;
 
 public interface ScrServiceMBean {
     String[] listComponents() throws Exception;
+    
+    int componentState(String componentName) throws Exception;
 
     void activateComponent(String componentName) throws Exception;
 
