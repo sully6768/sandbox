@@ -21,15 +21,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.SimpleJmsComponent;
 import org.apache.camel.component.sjms.SimpleJmsComponentConfiguration;
-import org.apache.camel.component.sjms.SimpleJmsConsumer;
-import org.apache.camel.component.sjms.SimpleJmsEndpoint;
-import org.apache.camel.component.sjms.SimpleJmsProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
  * Represents a ActiveMQNoSpring endpoint.
  */
-public class SimpleJmsTopicEndpoint extends SimpleJmsEndpoint {
+public class SimpleJmsTopicEndpoint extends DefaultEndpoint {
     private SimpleJmsComponentConfiguration configuration;
     
     public SimpleJmsTopicEndpoint() {
@@ -40,11 +37,11 @@ public class SimpleJmsTopicEndpoint extends SimpleJmsEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SimpleJmsProducer(this);
+        return null;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new SimpleJmsConsumer(this, processor);
+        return null;
     }
 
     public boolean isSingleton() {

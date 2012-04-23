@@ -25,9 +25,9 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.sjms.SimpleJmsConsumer;
 import org.apache.camel.component.sjms.pool.ConsumerPool;
 import org.apache.camel.component.sjms.pool.SessionPool;
-import org.apache.camel.impl.DefaultConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The SimpleJmsQueue consumer.
  */
-public class SimpleJmsQueueConsumer extends DefaultConsumer {
+public class SimpleJmsQueueConsumer extends SimpleJmsConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleJmsQueueConsumer.class);
     private SessionPool sessions;
     private ConsumerPool consumers;

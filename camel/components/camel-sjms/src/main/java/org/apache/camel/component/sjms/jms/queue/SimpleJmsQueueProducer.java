@@ -21,9 +21,9 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.SimpleJmsProducer;
 import org.apache.camel.component.sjms.pool.ProducerPool;
 import org.apache.camel.component.sjms.pool.SessionPool;
-import org.apache.camel.impl.DefaultProducer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The ActiveMQNoSpring producer.
  */
-public class SimpleJmsQueueProducer extends DefaultProducer {
+public class SimpleJmsQueueProducer extends SimpleJmsProducer {
     private static final transient Logger LOG = LoggerFactory
             .getLogger(SimpleJmsQueueProducer.class);
 

@@ -38,6 +38,10 @@
     <name>A Camel Component</name>
     <url>http://www.myorganization.org</url>
 
+
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.component.sjms.*</camel.osgi.export.pkg>
+    </properties>
     <dependencies>
     <!-- =============================== -->
     <!-- Required Dependencies -->

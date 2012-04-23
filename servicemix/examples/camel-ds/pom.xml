@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.servicemix.examples</groupId>
         <artifactId>examples</artifactId>
-        <version>4.4.0-fuse-00-43</version>
+        <version>4.4.1-fuse-03-06</version>
     </parent>
 
     <artifactId>camel-ds</artifactId>
@@ -41,6 +41,17 @@
         <felix.scr.plugin.version>1.7.0</felix.scr.plugin.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>release-repo</id>
+            <url>https://raw.github.com/sully6768/sully6768-mvn-repo/master/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshot-repo</id>
+            <url>https://raw.github.com/sully6768/sully6768-mvn-repo/master/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -58,6 +69,14 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-camel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
         </dependency>
 
         <dependency>
@@ -78,10 +97,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
