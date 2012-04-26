@@ -40,9 +40,10 @@
 
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.sjms.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>
+            org.apache.camel.component.sjms.*
+        </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
-            !${camel.osgi.export.pkg},
             org.apache.camel.*;${camel.osgi.import.camel.version},
             *
         </camel.osgi.import.pkg>
