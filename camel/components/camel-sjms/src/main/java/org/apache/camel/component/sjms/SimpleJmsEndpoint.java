@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a ActiveMQNoSpring endpoint.
+ * Represents a SimpleJms endpoint.
  */
 public abstract class SimpleJmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());

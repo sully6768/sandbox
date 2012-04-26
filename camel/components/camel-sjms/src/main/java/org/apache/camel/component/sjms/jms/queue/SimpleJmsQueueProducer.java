@@ -27,7 +27,7 @@ import org.apache.camel.component.sjms.pool.QueueProducerPool;
 import org.apache.camel.component.sjms.pool.SessionPool;
 
 /**
- * The ActiveMQNoSpring producer.
+ * The SimpleJmsQueue producer.
  */
 public class SimpleJmsQueueProducer extends SimpleJmsProducer {
 

@@ -23,7 +23,7 @@ import org.apache.camel.component.sjms.SimpleJmsComponent;
 import org.apache.camel.component.sjms.SimpleJmsEndpoint;
 
 /**
- * Represents a ActiveMQNoSpring endpoint.
+ * Represents a SimpleJmsQueue endpoint.
  */
 public class SimpleJmsQueueEndpoint extends SimpleJmsEndpoint {
     public SimpleJmsQueueEndpoint() {

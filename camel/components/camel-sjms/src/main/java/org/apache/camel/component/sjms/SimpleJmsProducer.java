@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The ActiveMQNoSpring producer.
+ * The SimpleJms producer.
  */
 public abstract class SimpleJmsProducer extends DefaultProducer {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
