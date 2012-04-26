@@ -24,14 +24,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.sjms.jms.queue.SimpleJmsQueueEndpoint;
 import org.apache.camel.component.sjms.jms.topic.SimpleJmsTopicEndpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 
 /**
  * Represents the component that manages {@link SimpleJmsEndpoint}.
  */
-public class SimpleJmsComponent extends DefaultComponent {
+public class SimpleJmsComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
     private ConnectionFactory connectionFactory;
     private SimpleJmsComponentConfiguration configuration;
+    private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
 
     protected Endpoint createEndpoint(String uri, String remaining,
             Map<String, Object> parameters) throws Exception {
@@ -103,5 +106,15 @@ public class SimpleJmsComponent extends DefaultComponent {
                 configuration.setConnectionFactory(getConnectionFactory());
         }
         return configuration;
+    }
+
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return this.headerFilterStrategy;
+    }
+
+    @Override
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }
