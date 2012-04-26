@@ -26,6 +26,7 @@ import org.apache.camel.component.sjms.SimpleJmsEndpoint;
  * Represents a SimpleJmsTopicEndpoint endpoint.
  */
 public class SimpleJmsTopicEndpoint  extends SimpleJmsEndpoint {
+    private String subscriptionName;
     public SimpleJmsTopicEndpoint() {
     }
 
@@ -49,5 +50,23 @@ public class SimpleJmsTopicEndpoint  extends SimpleJmsEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    /**
+     * Sets the value of subscriptionName for this instance of SimpleJmsTopicEndpoint.
+     *
+     * @param subscriptionName the subscriptionName to set
+     */
+    public void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
+
+    /**
+     * Returns the value of subscriptionName for this instance of SimpleJmsTopicEndpoint.
+     *
+     * @return the SimpleJmsTopicEndpoint or null
+     */
+    public String getSubscriptionName() {
+        return subscriptionName;
     }
 }

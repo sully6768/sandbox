@@ -16,16 +16,46 @@
  */
 package org.apache.camel.component.sjms.jms.topic;
 
+import javax.jms.MessageConsumer;
+import javax.jms.Topic;
+import javax.jms.TopicSession;
+
 import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.SimpleJmsEndpoint;
+import org.apache.camel.component.sjms.pool.SessionPool;
 
 /**
  *
  */
 public class SimpleJmsDurableTopicSubscriber extends SimpleJmsTopicSubscriber {
+    private String messageSelector;
+    private MessageConsumer messageConsumer;
+    private String subscriptionName;
+    
     public SimpleJmsDurableTopicSubscriber(SimpleJmsEndpoint endpoint,
             Processor processor) {
         super(endpoint, processor);
+        this.getEndpoint().getEndpointConfiguration().getParameter("subscriptionName");
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        SessionPool pool = getSimpleJmsEndpoint().getSessions();
+        TopicSession topicSession = (TopicSession) pool.borrowObject();
+        Topic topic = topicSession.createTopic(getSimpleJmsEndpoint().getDestinationName());
+        if (messageSelector == null || messageSelector.equals(""))
+            messageConsumer = topicSession.createDurableSubscriber(topic, subscriptionName);
+        else
+            messageConsumer = topicSession.createDurableSubscriber(topic, this.messageSelector, subscriptionName, true);
+        pool.returnObject(topicSession);
+        messageConsumer.setMessageListener(createMessageListener());
+        super.doStart();
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if(messageConsumer != null)
+            messageConsumer.close();   
+    }
 }

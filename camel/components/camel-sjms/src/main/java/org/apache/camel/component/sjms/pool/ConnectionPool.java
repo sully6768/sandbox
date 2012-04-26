@@ -15,6 +15,8 @@
  */
 package org.apache.camel.component.sjms.pool;
 
+import java.util.UUID;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 
@@ -63,6 +65,7 @@ public class ConnectionPool extends ObjectPool<Connection> {
             }
         }
         if(connection != null) {
+            connection.setClientID(UUID.randomUUID().toString());
             connection.start();
         }
         return connection;
