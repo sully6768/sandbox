@@ -17,24 +17,44 @@
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.MultipleConsumersSupport;
+import org.apache.camel.component.sjms.pool.ConnectionPool;
+import org.apache.camel.component.sjms.pool.SessionPool;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a ActiveMQNoSpring endpoint.
  */
 public abstract class SimpleJmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
+    
     private SimpleJmsComponentConfiguration configuration;
+
+    private ConnectionPool connections;
+
+    private SessionPool sessions;
 
     public SimpleJmsEndpoint() {
     }
 
     public SimpleJmsEndpoint(String uri, SimpleJmsComponent component) {
         super(uri, component);
+        this.setConfiguration(component.getConfiguration());
+        setConnections(new ConnectionPool(getConfiguration().getMaxConnections(), getConfiguration().getConnectionFactory()));
+        setSessions(new SessionPool(getConfiguration().getMaxSessions(), getConnections()));
     }
 
     public boolean isSingleton() {
         return true;
     }
+
+	/**
+	 * @param endpoint
+	 */
+	public String getDestinationName() {
+		return getEndpointUri().substring(getEndpointUri().lastIndexOf(":") + 1);
+	}
 
     /**
      * Sets the SimpleJmsComponentConfiguration value of configuration for this
@@ -65,4 +85,70 @@ public abstract class SimpleJmsEndpoint extends DefaultEndpoint implements Multi
 	public boolean isMultipleConsumersSupported() {
 		return true;
 	}
+
+    /**
+     * 
+     * @see org.apache.camel.impl.DefaultEndpoint#doStart()
+     */
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        getConnections().fillPool();
+        getSessions().fillPool();
+    }
+
+    /**
+     * 
+     * @see org.apache.camel.impl.DefaultEndpoint#doStop()
+     */
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        getSessions().drainPool();
+        getConnections().drainPool();
+    }
+
+    /**
+     * Sets the value of connections for this instance of SimpleJmsQueueEndpoint.
+     *
+     * @param connections the connections to set
+     */
+    public void setConnections(ConnectionPool connections) {
+        this.connections = connections;
+    }
+
+    /**
+     * Returns the value of connections for this instance of SimpleJmsQueueEndpoint.
+     *
+     * @return the SimpleJmsQueueEndpoint or null
+     */
+    public ConnectionPool getConnections() {
+        return connections;
+    }
+
+    /**
+     * Sets the value of sessions for this instance of SimpleJmsQueueEndpoint.
+     *
+     * @param sessions the sessions to set
+     */
+    public void setSessions(SessionPool sessions) {
+        this.sessions = sessions;
+    }
+
+    /**
+     * Returns the value of sessions for this instance of SimpleJmsQueueEndpoint.
+     *
+     * @return the SimpleJmsQueueEndpoint or null
+     */
+    public SessionPool getSessions() {
+        return sessions;
+    }
+
+    /**
+     * @return
+     */
+    protected int getMaxProducers() {
+        int maxProducers = ((SimpleJmsComponent)this.getComponent()).getConfiguration().getMaxProducers();
+        return maxProducers;
+    }
 }

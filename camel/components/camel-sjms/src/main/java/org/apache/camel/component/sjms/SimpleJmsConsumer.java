@@ -17,14 +17,37 @@
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.sjms.jms.DefaultJmsMessageListener;
 import org.apache.camel.impl.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SimpleJmsConsumer consumer.
  */
 public abstract class SimpleJmsConsumer extends DefaultConsumer {
 
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
+
     public SimpleJmsConsumer(SimpleJmsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    /**
+     * @return
+     */
+    protected DefaultJmsMessageListener createMessageListener() {
+    	DefaultJmsMessageListener listener = new DefaultJmsMessageListener();
+    	listener.setEndpoint(getEndpoint());
+    	listener.setExceptionHandler(getExceptionHandler());
+    	if (getAsyncProcessor() != null)
+    		listener.setProcessor(getAsyncProcessor());
+    	else
+    		listener.setProcessor(getProcessor());
+    	return listener;
+    }
+
+    protected SimpleJmsEndpoint getSimpleJmsEndpoint() {
+        return (SimpleJmsEndpoint)this.getEndpoint();
     }
 }

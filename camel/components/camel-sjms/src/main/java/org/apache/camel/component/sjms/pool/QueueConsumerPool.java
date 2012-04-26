@@ -15,26 +15,21 @@
  */
 package org.apache.camel.component.sjms.pool;
 
-import javax.jms.MessageConsumer;
 import javax.jms.Queue;
+import javax.jms.QueueReceiver;
 import javax.jms.QueueSession;
 
 /**
- * TODO Add Class documentation for ConsumerPool
+ * TODO Add Class documentation for QueueConsumerPool
  * 
  */
-public class ConsumerPool extends ObjectPool<MessageConsumer> {
+public class QueueConsumerPool extends ObjectPool<QueueReceiver> {
 
 	private final SessionPool sessionPool;
 	private final String destinationName;
 	private final String messageSelector;
 
-	public ConsumerPool(int poolSize, SessionPool sessionPool,
-			String destinationName) {
-		this(poolSize, sessionPool, destinationName, null);
-	}
-
-	public ConsumerPool(int poolSize, SessionPool sessionPool,
+	public QueueConsumerPool(int poolSize, SessionPool sessionPool,
 			String destinationName, String messageSelector) {
 		super(poolSize);
 		this.sessionPool = sessionPool;
@@ -43,21 +38,21 @@ public class ConsumerPool extends ObjectPool<MessageConsumer> {
 	}
 
 	@Override
-	protected MessageConsumer createObject() throws Exception {
+	protected QueueReceiver createObject() throws Exception {
 		QueueSession queueSession = (QueueSession) sessionPool.borrowObject();
 		Queue myQueue = queueSession.createQueue(this.destinationName);
-		MessageConsumer messageConsumer = null;
+		QueueReceiver messageConsumer = null;
 		if (messageSelector == null || messageSelector.equals(""))
-			messageConsumer = queueSession.createConsumer(myQueue);
+			messageConsumer = queueSession.createReceiver(myQueue);
 		else
-			messageConsumer = queueSession.createConsumer(myQueue,
+			messageConsumer = queueSession.createReceiver(myQueue,
 					this.messageSelector);
 		sessionPool.returnObject(queueSession);
 		return messageConsumer;
 	}
 
 	@Override
-	protected void destroyObject(MessageConsumer consumer) throws Exception {
+	protected void destroyObject(QueueReceiver consumer) throws Exception {
 		if (consumer != null) {
 			consumer.close();
 		}
@@ -65,7 +60,7 @@ public class ConsumerPool extends ObjectPool<MessageConsumer> {
 
 	/**
 	 * Gets the SessionPool value of sessionPool for this instance of
-	 * ProducerPool.
+	 * QueueProducerPool.
 	 * 
 	 * @return the sessionPool
 	 */

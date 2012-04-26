@@ -21,50 +21,27 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.SimpleJmsComponent;
 import org.apache.camel.component.sjms.SimpleJmsEndpoint;
-import org.apache.camel.component.sjms.pool.ConnectionPool;
-import org.apache.camel.component.sjms.pool.SessionPool;
 
 /**
  * Represents a ActiveMQNoSpring endpoint.
  */
 public class SimpleJmsQueueEndpoint extends SimpleJmsEndpoint {
-    private ConnectionPool connections;
-    private SessionPool sessions;
-    
     public SimpleJmsQueueEndpoint() {
     }
 
     public SimpleJmsQueueEndpoint(String uri, SimpleJmsComponent component) {
         super(uri, component);
-        connections = new ConnectionPool(component.getConfiguration().getMaxConnections(), component.getConfiguration().getConnectionFactory());
-        sessions = new SessionPool(component.getConfiguration().getMaxSessions(), connections);
     }
 
     public Producer createProducer() throws Exception {
-        int maxProducers = ((SimpleJmsComponent)this.getComponent()).getConfiguration().getMaxProducers();
-        return new SimpleJmsQueueProducer(this, sessions, maxProducers);
+        return new SimpleJmsQueueProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        int maxConsumers = ((SimpleJmsComponent)this.getComponent()).getConfiguration().getMaxConsumers();
-        return new SimpleJmsQueueConsumer(this, processor, sessions, maxConsumers);
+        return new SimpleJmsQueueConsumer(this, processor);
     }
 
     public boolean isSingleton() {
         return true;
-    }
-    
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        connections.fillPool();
-        sessions.fillPool();
-    }
-    
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        sessions.drainPool();
-        connections.drainPool();
     }
 }

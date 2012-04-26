@@ -14,55 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.jms.queue;
+package org.apache.camel.component.sjms.jms.topic;
 
-import javax.jms.QueueSender;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.jms.TopicPublisher;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.SimpleJmsEndpoint;
 import org.apache.camel.component.sjms.SimpleJmsProducer;
-import org.apache.camel.component.sjms.pool.QueueProducerPool;
-import org.apache.camel.component.sjms.pool.SessionPool;
+import org.apache.camel.component.sjms.pool.TopicProducerPool;
 
 /**
- * The ActiveMQNoSpring producer.
+ *
  */
-public class SimpleJmsQueueProducer extends SimpleJmsProducer {
+public class SimpleJmsTopicPublisher extends SimpleJmsProducer {
+    private TopicProducerPool producers;
 
-    private String destinationName = null;
-    private SessionPool sessions;
-    private QueueProducerPool producers;
-    private int maxProducers = 1;
-
-    public SimpleJmsQueueProducer(SimpleJmsEndpoint endpoint) {
+    public SimpleJmsTopicPublisher(SimpleJmsEndpoint endpoint) {
         super(endpoint);
-        this.destinationName = endpoint.getDestinationName();
-        this.sessions = endpoint.getSessions();
-        this.maxProducers = endpoint.getConfiguration().getMaxProducers();
     }
 
     public void process(Exchange exchange) throws Exception {
-    	TextMessage textMessage = createTextMessage();
+        TextMessage textMessage = createTextMessage();
         textMessage.setText((String) exchange.getIn().getBody());
-        QueueSender sender = producers.borrowObject();
+        TopicPublisher sender = producers.borrowObject();
         producers.returnObject(sender);
         sender.send(textMessage);
         logger.info((String) exchange.getIn().getBody());
     }
     
     private TextMessage createTextMessage() throws Exception {
-    	Session s = sessions.borrowObject();
+        Session s = getSimpleJmsEndpoint().getSessions().borrowObject();
         TextMessage textMessage = s.createTextMessage();
-        sessions.returnObject(s);
+        getSimpleJmsEndpoint().getSessions().returnObject(s);
         return textMessage;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        producers = new QueueProducerPool(maxProducers, sessions, destinationName);
+        producers = new TopicProducerPool(
+                getSimpleJmsEndpoint().getConfiguration().getMaxProducers(), 
+                getSimpleJmsEndpoint().getSessions(), 
+                getSimpleJmsEndpoint().getDestinationName(), 
+                null);
         producers.fillPool();
     }
 
@@ -72,4 +68,5 @@ public class SimpleJmsQueueProducer extends SimpleJmsProducer {
         producers.drainPool();
         producers = null;
     }
+
 }

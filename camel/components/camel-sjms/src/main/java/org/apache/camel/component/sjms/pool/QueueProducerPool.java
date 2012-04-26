@@ -20,10 +20,10 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 
 /**
- * TODO Add Class documentation for ProducerPool
+ * TODO Add Class documentation for QueueProducerPool
  *
  */
-public class ProducerPool extends ObjectPool<QueueSender>{
+public class QueueProducerPool extends ObjectPool<QueueSender>{
     private final SessionPool sessionPool;
     private final String destinationName;
 
@@ -32,7 +32,7 @@ public class ProducerPool extends ObjectPool<QueueSender>{
      *
      * @param sessionPool
      */
-    public ProducerPool(int poolSize, SessionPool sessionPool, String destinationName) {
+    public QueueProducerPool(int poolSize, SessionPool sessionPool, String destinationName) {
         super(poolSize);
         this.sessionPool = sessionPool;
         this.destinationName = destinationName;
@@ -55,7 +55,7 @@ public class ProducerPool extends ObjectPool<QueueSender>{
     }
 
     /**
-     * Gets the SessionPool value of sessionPool for this instance of ProducerPool.
+     * Gets the SessionPool value of sessionPool for this instance of QueueProducerPool.
      *
      * @return the sessionPool
      */

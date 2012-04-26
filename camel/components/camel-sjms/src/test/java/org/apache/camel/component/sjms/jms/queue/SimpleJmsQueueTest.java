@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.pool;
+package org.apache.camel.component.sjms.jms.queue;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,12 +30,12 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
 
-public class SimpleJmsPooledComponentTest extends CamelTestSupport {
+public class SimpleJmsQueueTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
     
-    public SimpleJmsPooledComponentTest() {
+    public SimpleJmsQueueTest() {
     	enableJMX();
 	}
     

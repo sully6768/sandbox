@@ -16,38 +16,16 @@
  */
 package org.apache.camel.component.sjms.jms.topic;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.component.sjms.SimpleJmsComponent;
 import org.apache.camel.component.sjms.SimpleJmsEndpoint;
 
 /**
- * Represents a SimpleJmsTopicEndpoint endpoint.
+ *
  */
-public class SimpleJmsTopicEndpoint  extends SimpleJmsEndpoint {
-    public SimpleJmsTopicEndpoint() {
+public class SimpleJmsDurableTopicSubscriber extends SimpleJmsTopicSubscriber {
+    public SimpleJmsDurableTopicSubscriber(SimpleJmsEndpoint endpoint,
+            Processor processor) {
+        super(endpoint, processor);
     }
 
-    public SimpleJmsTopicEndpoint(String uri, SimpleJmsComponent component) {
-        super(uri, component);
-    }
-
-    public Producer createProducer() throws Exception {
-        return new SimpleJmsTopicPublisher(this);
-    }
-
-    public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer answer = null;
-        if(this.getConfiguration().isDurableSubscription()) {
-            answer = new SimpleJmsDurableTopicSubscriber(this, processor);
-        } else {
-            answer = new SimpleJmsTopicSubscriber(this, processor);
-        }
-        return answer;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
 }

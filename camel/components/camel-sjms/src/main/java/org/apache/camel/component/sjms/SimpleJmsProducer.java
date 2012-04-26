@@ -27,15 +27,17 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class SimpleJmsProducer extends DefaultProducer {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
-//    private SimpleJmsEndpoint endpoint;
 
     public SimpleJmsProducer(SimpleJmsEndpoint endpoint) {
         super(endpoint);
-//        this.endpoint = endpoint;
     }
 
     public void process(Exchange exchange) throws Exception {
         System.out.println(exchange.getIn().getBody());    
+    }
+
+    protected SimpleJmsEndpoint getSimpleJmsEndpoint() {
+        return (SimpleJmsEndpoint)this.getEndpoint();
     }
 
 }

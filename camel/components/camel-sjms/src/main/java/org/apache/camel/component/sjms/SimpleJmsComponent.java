@@ -22,6 +22,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.sjms.jms.queue.SimpleJmsQueueEndpoint;
+import org.apache.camel.component.sjms.jms.topic.SimpleJmsTopicEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -38,7 +39,7 @@ public class SimpleJmsComponent extends DefaultComponent {
         if (uri.indexOf("://queue:") > -1) {
             endpoint = new SimpleJmsQueueEndpoint(uri, this);
         } else {
-//            endpoint = new SimpleJmsTopicEndpoint(uri, this);
+            endpoint = new SimpleJmsTopicEndpoint(uri, this);
         }
         setProperties(endpoint, parameters);
         return endpoint;
@@ -97,10 +98,9 @@ public class SimpleJmsComponent extends DefaultComponent {
         if (configuration == null) {
             configuration = new SimpleJmsComponentConfiguration();
             configuration.setConnectionFactory(getConnectionFactory());
-        } else if (configuration != null && configuration.getConnectionFactory() == null) {
-            configuration.setConnectionFactory(getConnectionFactory());
-        } else {
-            configuration.setConnectionFactory(connectionFactory);
+        } else if (configuration != null) {
+            if(configuration.getConnectionFactory() == null)
+                configuration.setConnectionFactory(getConnectionFactory());
         }
         return configuration;
     }
