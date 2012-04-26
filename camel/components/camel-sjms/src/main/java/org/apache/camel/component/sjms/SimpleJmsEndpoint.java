@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms;
 
 import org.apache.camel.MultipleConsumersSupport;
+import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 import org.apache.camel.component.sjms.pool.ConnectionPool;
 import org.apache.camel.component.sjms.pool.SessionPool;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -42,7 +43,10 @@ public abstract class SimpleJmsEndpoint extends DefaultEndpoint implements Multi
         super(uri, component);
         this.setConfiguration(component.getConfiguration());
         setConnections(new ConnectionPool(getConfiguration().getMaxConnections(), getConfiguration().getConnectionFactory()));
-        setSessions(new SessionPool(getConfiguration().getMaxSessions(), getConnections()));
+        SessionPool sessions = new SessionPool(getConfiguration().getMaxSessions(), getConnections());
+        sessions.setAcknowledgeMode(SessionAcknowledgementType.valueOf(getConfiguration().getAcknowledgementMode()));
+        sessions.setTransacted(getConfiguration().isTransacted());
+        setSessions(sessions);
     }
 
     public boolean isSingleton() {

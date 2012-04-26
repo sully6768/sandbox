@@ -46,6 +46,8 @@ public class SimpleJmsComponentConfiguration {
     private int messagePriority = 10;
 
     private long messageTimeToLive = -1;
+    
+    private String acknowledgementMode = "AUTO_ACKNOWLEDGE";
 
     /**
      * Gets the Integer value of maxConnections for this instance of
@@ -297,6 +299,24 @@ public class SimpleJmsComponentConfiguration {
      */
     public long getMessageTimeToLive() {
         return messageTimeToLive;
+    }
+
+    /**
+     * Sets the value of acknowledgementMode for this instance of SimpleJmsComponentConfiguration.
+     *
+     * @param acknowledgementMode the acknowledgementMode to set
+     */
+    public void setAcknowledgementMode(String acknowledgementMode) {
+        this.acknowledgementMode = acknowledgementMode;
+    }
+
+    /**
+     * Returns the value of acknowledgementMode for this instance of SimpleJmsComponentConfiguration.
+     *
+     * @return the SimpleJmsComponentConfiguration or null
+     */
+    public String getAcknowledgementMode() {
+        return acknowledgementMode;
     }
 
 }
