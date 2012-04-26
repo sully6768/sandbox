@@ -54,11 +54,33 @@ public class ConnectionPoolTest {
     @Test
     public void testCreateObject() throws Exception {
         ConnectionPool pool = new ConnectionPool(1, connectionFactory);
+        pool.fillPool();
         assertNotNull(pool);
         ActiveMQConnection connection = (ActiveMQConnection) pool
                 .borrowObject();
         assertNotNull(connection);
         assertTrue(connection.isStarted());
+        pool.drainPool();
+    }
+
+    /**
+     * Test method for
+     * {@link org.apache.camel.component.sjms.pool.ConnectionPoolTest#createObject()}
+     * .
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testDestroyObject() throws Exception {
+        ConnectionPool pool = new ConnectionPool(1, connectionFactory);
+        pool.fillPool();
+        assertNotNull(pool);
+        ActiveMQConnection connection = (ActiveMQConnection) pool
+                .borrowObject();
+        assertNotNull(connection);
+        assertTrue(connection.isStarted());
+        pool.drainPool();
+        assertTrue(pool.size() == 0);
     }
 
     /**
@@ -70,6 +92,7 @@ public class ConnectionPoolTest {
     @Test
     public void testBorrowObject() throws Exception {
         ConnectionPool pool = new ConnectionPool(1, connectionFactory);
+        pool.fillPool();
         assertNotNull(pool);
         ActiveMQConnection connection = (ActiveMQConnection) pool.borrowObject();
         assertNotNull(connection);
@@ -77,7 +100,7 @@ public class ConnectionPoolTest {
 
         ActiveMQConnection connection2 = (ActiveMQConnection) pool.borrowObject();
         assertNull(connection2);
-        pool.destroyPool();
+        pool.drainPool();
     }
 
     /**
@@ -89,6 +112,7 @@ public class ConnectionPoolTest {
     @Test
     public void testReturnObject() throws Exception {
         ConnectionPool pool = new ConnectionPool(1, connectionFactory);
+        pool.fillPool();
         assertNotNull(pool);
         ActiveMQConnection connection = (ActiveMQConnection) pool.borrowObject();
         assertNotNull(connection);
@@ -96,7 +120,7 @@ public class ConnectionPoolTest {
         pool.returnObject(connection);
         ActiveMQConnection connection2 = (ActiveMQConnection) pool.borrowObject();
         assertNotNull(connection2);
-        pool.destroyPool();
+        pool.drainPool();
     }
 
 }

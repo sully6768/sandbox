@@ -41,6 +41,11 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.sjms.*</camel.osgi.export.pkg>
+        <camel.osgi.import.pkg>
+            !${camel.osgi.export.pkg},
+            org.apache.camel.*;${camel.osgi.import.camel.version},
+            *
+        </camel.osgi.import.pkg>
     </properties>
     <dependencies>
     <!-- =============================== -->
@@ -58,11 +63,15 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-annotation_1.0_spec</artifactId>
             <version>1.1.1</version>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jta_1.1_spec</artifactId>
             <version>1.1.1</version>
             <optional>true</optional>
         </dependency>
@@ -82,7 +91,13 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
-            <version>5.6-SNAPSHOT</version>
+            <version>5.6.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.7.1</version>
             <scope>test</scope>
         </dependency>
     <!-- logging -->

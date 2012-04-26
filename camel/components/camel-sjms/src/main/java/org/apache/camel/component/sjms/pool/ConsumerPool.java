@@ -15,55 +15,61 @@
  */
 package org.apache.camel.component.sjms.pool;
 
-import java.util.List;
-
 import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.QueueSession;
 
 /**
  * TODO Add Class documentation for ConsumerPool
- *
+ * 
  */
-public class ConsumerPool extends ObjectPool<MessageConsumer>{
+public class ConsumerPool extends ObjectPool<MessageConsumer> {
 
-    private final SessionPool sessionPool;
-    private final String destinationName;
+	private final SessionPool sessionPool;
+	private final String destinationName;
+	private final String messageSelector;
 
-    /**
-     * TODO Add Constructor Javadoc
-     *
-     * @param sessionPool
-     */
-    public ConsumerPool(int poolSize, SessionPool sessionPool, String destinationName) {
-        super(poolSize);
-        this.sessionPool = sessionPool;
-        this.destinationName = destinationName;
-    }
+	public ConsumerPool(int poolSize, SessionPool sessionPool,
+			String destinationName) {
+		this(poolSize, sessionPool, destinationName, null);
+	}
 
-    @Override
-    protected MessageConsumer createObject() throws Exception {
-        QueueSession queueSession = (QueueSession) sessionPool.borrowObject();
-        Queue myQueue = queueSession.createQueue(this.destinationName);
-        MessageConsumer messageConsumer = queueSession.createConsumer(myQueue);
-        sessionPool.returnObject(queueSession);
-        return messageConsumer;
-    }
+	public ConsumerPool(int poolSize, SessionPool sessionPool,
+			String destinationName, String messageSelector) {
+		super(poolSize);
+		this.sessionPool = sessionPool;
+		this.destinationName = destinationName;
+		this.messageSelector = messageSelector;
+	}
 
-    @Override
-    protected void destroyPoolObjects() throws Exception {
-        List<MessageConsumer> list = drainObjectPool();
-        for (MessageConsumer consumer : list) {
-            consumer.close();
-        }
-    }
+	@Override
+	protected MessageConsumer createObject() throws Exception {
+		QueueSession queueSession = (QueueSession) sessionPool.borrowObject();
+		Queue myQueue = queueSession.createQueue(this.destinationName);
+		MessageConsumer messageConsumer = null;
+		if (messageSelector == null || messageSelector.equals(""))
+			messageConsumer = queueSession.createConsumer(myQueue);
+		else
+			messageConsumer = queueSession.createConsumer(myQueue,
+					this.messageSelector);
+		sessionPool.returnObject(queueSession);
+		return messageConsumer;
+	}
 
-    /**
-     * Gets the SessionPool value of sessionPool for this instance of ProducerPool.
-     *
-     * @return the sessionPool
-     */
-    public SessionPool getSessionPoolFactory() {
-        return sessionPool;
-    }
+	@Override
+	protected void destroyObject(MessageConsumer consumer) throws Exception {
+		if (consumer != null) {
+			consumer.close();
+		}
+	}
+
+	/**
+	 * Gets the SessionPool value of sessionPool for this instance of
+	 * ProducerPool.
+	 * 
+	 * @return the sessionPool
+	 */
+	public SessionPool getSessionPoolFactory() {
+		return sessionPool;
+	}
 }

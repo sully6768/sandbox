@@ -15,8 +15,6 @@
  */
 package org.apache.camel.component.sjms.pool;
 
-import java.util.List;
-
 import javax.jms.Connection;
 import javax.jms.Session;
 
@@ -75,11 +73,10 @@ public class SessionPool extends ObjectPool<Session> {
         }
         return session;
     }
-
+    
     @Override
-    protected void destroyPoolObjects() throws Exception {
-        List<Session> list = drainObjectPool();
-        for (Session session : list) {
+    protected void destroyObject(Session session) throws Exception {
+        if (session != null) {
             if(transacted)
                 session.commit();
             session.close();

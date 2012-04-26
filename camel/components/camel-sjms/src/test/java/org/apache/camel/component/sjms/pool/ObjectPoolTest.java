@@ -55,6 +55,7 @@ public class ObjectPoolTest {
     public void testObjectPool() throws Exception {
         TestPool testPool = new TestPool();
         assertNotNull(testPool);
+        testPool.fillPool();
         MyPooledObject pooledObject = testPool.borrowObject();
         assertNotNull(pooledObject);
         assertTrue("Expected a value of 1.  Returned: " + pooledObject.getObjectId(), pooledObject.getObjectId() == 1);
@@ -65,6 +66,7 @@ public class ObjectPoolTest {
         testPool.returnObject(pooledObject);
         nextPooledObject = testPool.borrowObject();
         assertNotNull(nextPooledObject);
+        testPool.drainPool();
     }
 
     /**
@@ -89,7 +91,10 @@ public class ObjectPoolTest {
     @Test
     public void testObjectPoolInt() throws Exception {
         final int maxPoolObjects = 5;
+        
         TestPool testPool = new TestPool(maxPoolObjects);
+        testPool.fillPool();
+        
         List<MyPooledObject> poolObjects = new ArrayList<MyPooledObject>();
         for (int i = 0; i < maxPoolObjects; i++) {
             poolObjects.add(testPool.borrowObject());
@@ -110,7 +115,8 @@ public class ObjectPoolTest {
         MyPooledObject pooledObject = testPool.borrowObject();
         assertNotNull(pooledObject);
         assertTrue("Expected a value in the range of 1-5.  Returned: " + pooledObject.getObjectId(), pooledObject.getObjectId() > 0 && pooledObject.getObjectId() < 6);
-
+        
+        testPool.drainPool();
     }
 
     /**
@@ -134,12 +140,14 @@ public class ObjectPoolTest {
     @Test
     public void testBorrowObject() throws Exception {
         TestPool testPool = new TestPool();
+        testPool.fillPool();
         MyPooledObject pooledObject = testPool.borrowObject();
         assertNotNull(pooledObject);
         assertTrue("Expected a value of 1.  Returned: " + pooledObject.getObjectId(), pooledObject.getObjectId() == 1);
 
         MyPooledObject nextPooledObject = testPool.borrowObject();
         assertNull("Expected a null as the pool of 1 was already removed", nextPooledObject);
+        testPool.drainPool();
     }
 
     /**
@@ -151,12 +159,14 @@ public class ObjectPoolTest {
     @Test
     public void testReturnObject() throws Exception {
         TestPool testPool = new TestPool();
+        testPool.fillPool();
         assertNotNull(testPool);
         MyPooledObject pooledObject = testPool.borrowObject();
         MyPooledObject nextPooledObject = testPool.borrowObject();
         testPool.returnObject(pooledObject);
         nextPooledObject = testPool.borrowObject();
         assertNotNull(nextPooledObject);
+        testPool.drainPool();
     }
 
     class TestPool extends ObjectPool<MyPooledObject> {
@@ -173,11 +183,9 @@ public class ObjectPoolTest {
         protected MyPooledObject createObject() throws Exception {
             return new MyPooledObject(atomicInteger.incrementAndGet());
         }
-
         @Override
-        protected void destroyPoolObjects() throws Exception {
-            // TODO Auto-generated method stub
-            
+        protected void destroyObject(MyPooledObject t) throws Exception {
+        	t = null;
         }
 
     }
@@ -204,10 +212,12 @@ public class ObjectPoolTest {
         protected Object createObject() throws Exception {
             throw new Exception();
         }
-
+		
         @Override
-        protected void destroyPoolObjects() throws Exception {
-            throw new Exception();
-        }
+		protected void destroyObject(Object t) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
+        
     }
 }

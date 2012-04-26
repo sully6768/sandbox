@@ -34,14 +34,25 @@ public class SimpleJmsPooledComponentTest extends CamelTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
+    
+    public SimpleJmsPooledComponentTest() {
+    	enableJMX();
+	}
+    
+    @Override
+    protected boolean useJmx() {
+    	return true;
+    }
 
     @Test
     public void testRepeatedHelloWorld() throws Exception {
         ExecutorService executor = Executors.newFixedThreadPool(10); 
         final String expectedBody = "Hello World!";
         MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock2 = getMockEndpoint("mock:result2");
 
-        mock.expectedMinimumMessageCount(500);
+        mock.expectedMinimumMessageCount(100);
+        mock2.expectedMinimumMessageCount(100);
 
         for (int i = 0; i < 500; i++) {
             final int tempI = i;
@@ -59,7 +70,13 @@ public class SimpleJmsPooledComponentTest extends CamelTestSupport {
 
         }
         mock.assertIsSatisfied();
+        mock2.assertIsSatisfied();
 
+    }
+    
+    @Override
+    protected void doPreSetup() throws Exception {
+    	super.doPreSetup();
     }
 
     @Override
@@ -81,6 +98,7 @@ public class SimpleJmsPooledComponentTest extends CamelTestSupport {
 
                 from("direct:start").to("sjms:queue:test.foo");
                 from("sjms:queue:test.foo").to("mock:result");
+                from("sjms:queue:test.foo").to("mock:result2");
             }
         };
     }

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.sjms;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -55,9 +52,12 @@ public class SimpleJmsComponentTest extends CamelTestSupport {
                 SimpleJmsComponent component = new SimpleJmsComponent();
                 component.setConnectionFactory(connectionFactory);
                 this.getContext().addComponent("sjms", component);
-
-                from("direct:start").to("sjms:queue:test.foo");
-                from("sjms:queue:test.foo").to("mock:result");
+                
+                from("direct:start")
+                    .to("sjms:queue:test.foo");
+                
+                from("sjms:queue:test.foo")
+                    .to("mock:result");
             }
         };
     }

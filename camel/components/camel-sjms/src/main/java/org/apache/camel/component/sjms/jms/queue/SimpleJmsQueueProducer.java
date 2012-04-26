@@ -21,6 +21,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.SimpleJmsEndpoint;
 import org.apache.camel.component.sjms.SimpleJmsProducer;
 import org.apache.camel.component.sjms.pool.ProducerPool;
 import org.apache.camel.component.sjms.pool.SessionPool;
@@ -40,9 +41,9 @@ public class SimpleJmsQueueProducer extends SimpleJmsProducer {
     private ProducerPool producers;
     private int maxProducers = 1;
 
-    public SimpleJmsQueueProducer(SimpleJmsQueueEndpoint endpoint, SessionPool sessionPool, int maxProducers) {
+    public SimpleJmsQueueProducer(SimpleJmsEndpoint endpoint, SessionPool sessionPool, int maxProducers) {
         super(endpoint);
-        destinationName = endpoint.getEndpointUri().substring(endpoint.getEndpointUri().lastIndexOf(":"));
+        destinationName = endpoint.getEndpointUri().substring(endpoint.getEndpointUri().lastIndexOf(":") + 1);
         this.sessions = sessionPool;
         this.maxProducers = maxProducers;
     }
@@ -62,12 +63,13 @@ public class SimpleJmsQueueProducer extends SimpleJmsProducer {
     protected void doStart() throws Exception {
         super.doStart();
         producers = new ProducerPool(maxProducers, sessions, destinationName);
+        producers.fillPool();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        producers.destroyPool();
+        producers.drainPool();
         producers = null;
     }
 }

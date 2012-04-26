@@ -56,12 +56,14 @@ public class SessionPoolTest {
     @Test
     public void testCreateObject() throws Exception {
         ConnectionPool connections = new ConnectionPool(1, connectionFactory);
+        connections.fillPool();
         SessionPool sessions = new SessionPool(1, connections);
+        sessions.fillPool();
         assertNotNull(sessions);
         Session session = sessions.createObject();
         assertNotNull(session);
-        sessions.destroyPool();
-        connections.destroyPool();
+        sessions.drainPool();
+        connections.drainPool();
     }
 
     /**
@@ -73,7 +75,9 @@ public class SessionPoolTest {
     @Test
     public void testBorrowObject() throws Exception {
         ConnectionPool connections = new ConnectionPool(1, connectionFactory);
+        connections.fillPool();
         SessionPool sessions = new SessionPool(1, connections);
+        sessions.fillPool();
         assertNotNull(sessions);
         ActiveMQSession session = (ActiveMQSession) sessions.borrowObject();
         assertNotNull(session);
@@ -81,8 +85,8 @@ public class SessionPoolTest {
 
         ActiveMQSession session2 = (ActiveMQSession) sessions.borrowObject();
         assertNull(session2);
-        sessions.destroyPool();
-        connections.destroyPool();
+        sessions.drainPool();
+        connections.drainPool();
     }
 
     /**
@@ -95,7 +99,9 @@ public class SessionPoolTest {
     @Test
     public void testReturnObject() throws Exception {
         ConnectionPool connections = new ConnectionPool(1, connectionFactory);
+        connections.fillPool();
         SessionPool sessions = new SessionPool(1, connections);
+        sessions.fillPool();
         assertNotNull(sessions);
         ActiveMQSession session = (ActiveMQSession) sessions.borrowObject();
         assertNotNull(session);
@@ -108,8 +114,8 @@ public class SessionPoolTest {
         session2 = (ActiveMQSession) sessions.borrowObject();
         assertNotNull(session2);
 
-        sessions.destroyPool();
-        connections.destroyPool();
+        sessions.drainPool();
+        connections.drainPool();
     }
 
 }

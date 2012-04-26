@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.sjms;
 
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
  * Represents a ActiveMQNoSpring endpoint.
  */
-public abstract class SimpleJmsEndpoint extends DefaultEndpoint {
+public abstract class SimpleJmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     private SimpleJmsComponentConfiguration configuration;
 
     public SimpleJmsEndpoint() {
@@ -56,4 +57,12 @@ public abstract class SimpleJmsEndpoint extends DefaultEndpoint {
     public SimpleJmsComponentConfiguration getConfiguration() {
         return configuration;
     }
+
+	/* (non-Javadoc)
+	 * @see org.apache.camel.MultipleConsumersSupport#isMultipleConsumersSupported()
+	 */
+	@Override
+	public boolean isMultipleConsumersSupported() {
+		return true;
+	}
 }

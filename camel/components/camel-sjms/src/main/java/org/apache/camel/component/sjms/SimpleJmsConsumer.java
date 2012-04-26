@@ -20,13 +20,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * The HelloWorld consumer.
+ * The SimpleJmsConsumer consumer.
  */
 public abstract class SimpleJmsConsumer extends DefaultConsumer {
-    private final SimpleJmsEndpoint endpoint;
 
     public SimpleJmsConsumer(SimpleJmsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
     }
 }

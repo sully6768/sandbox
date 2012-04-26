@@ -57,12 +57,14 @@ public class SimpleJmsQueueEndpoint extends SimpleJmsEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        connections.fillPool();
+        sessions.fillPool();
     }
     
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        sessions.destroyPool();
-        connections.destroyPool();
+        sessions.drainPool();
+        connections.drainPool();
     }
 }

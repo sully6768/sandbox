@@ -15,8 +15,6 @@
  */
 package org.apache.camel.component.sjms.pool;
 
-import java.util.List;
-
 import javax.jms.Queue;
 import javax.jms.QueueSender;
 import javax.jms.QueueSession;
@@ -48,11 +46,10 @@ public class ProducerPool extends ObjectPool<QueueSender>{
         sessionPool.returnObject(queueSession);
         return queueSender;
     }
-
+    
     @Override
-    protected void destroyPoolObjects() throws Exception {
-        List<QueueSender> list = drainObjectPool();
-        for (QueueSender queueSender : list) {
+    protected void destroyObject(QueueSender queueSender) throws Exception {
+        if (queueSender != null) {
             queueSender.close();
         }
     }

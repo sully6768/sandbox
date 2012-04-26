@@ -15,8 +15,6 @@
  */
 package org.apache.camel.component.sjms.pool;
 
-import java.util.List;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 
@@ -33,16 +31,19 @@ public class ConnectionPool extends ObjectPool<Connection> {
      * TODO Add Constructor Javadoc
      * 
      * @param poolSize
+     * @param connectionFactory
      */
     public ConnectionPool(int poolSize, ConnectionFactory connectionFactory) {
-        super(poolSize);
-        this.connectionFactory = connectionFactory;
+    	this(poolSize, connectionFactory, null, null);
     }
 
     /**
      * TODO Add Constructor Javadoc
      * 
      * @param poolSize
+     * @param connectionFactory
+     * @param username
+     * @param password
      */
     public ConnectionPool(int poolSize, ConnectionFactory connectionFactory, String username, String password) {
         super(poolSize);
@@ -61,18 +62,19 @@ public class ConnectionPool extends ObjectPool<Connection> {
                 connection = connectionFactory.createConnection();
             }
         }
-        if(connection != null)
+        if(connection != null) {
             connection.start();
+        }
         return connection;
     }
-
+    
     @Override
-    protected void destroyPoolObjects() throws Exception {
-        List<Connection> list = drainObjectPool();
-        for (Connection connection : list) {
+    protected void destroyObject(Connection connection) throws Exception {
+    	if (connection != null) {
             connection.stop();
             connection.close();
         }
+    	
     }
 
     /**
@@ -80,7 +82,7 @@ public class ConnectionPool extends ObjectPool<Connection> {
      * of ConnectionPool.
      * 
      * @param connectionFactory
-     *            Sets ConnectionFactory, default is TODO add default
+     *            Sets ConnectionFactory, default is null
      */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
