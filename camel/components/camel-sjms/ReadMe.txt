@@ -1,12 +1,12 @@
-Camel Component Project
+Camel Simple JMS Project (sjms)
 ====================
-This Project is a template of a Camel component.
+This project aims to create a basic Camel JMS component that relies strictly on the Java JMS API to 
+provide robust and scalable JMS to Camel without the need for additional 3rd party APIs.
 
-When you create a component project, you need to move the META-INF/services/org/apache/camel/component/${name}
-file to META-INF/services/org/apache/camel/component/foo where "foo" is the URI scheme for your component and any
-related endpoints created on the fly.
+The basic goals are to provide:
+* JMS Queue & Temporary Queue Support
+* JMS Topic Support
+* Connection & Session Pooling
+* Caching of Producers and Consumers 
 
-For more help see the Apache Camel documentation:
-
-    http://camel.apache.org/writing-components.html
-    
+The Component Service discovery ID is 'sjms'.    
