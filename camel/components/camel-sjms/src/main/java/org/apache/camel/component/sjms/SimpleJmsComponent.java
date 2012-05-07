@@ -34,7 +34,7 @@ public class SimpleJmsComponent extends DefaultComponent implements HeaderFilter
 
     private ConnectionFactory connectionFactory;
     private SimpleJmsComponentConfiguration configuration;
-    private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
 
     protected Endpoint createEndpoint(String uri, String remaining,
             Map<String, Object> parameters) throws Exception {

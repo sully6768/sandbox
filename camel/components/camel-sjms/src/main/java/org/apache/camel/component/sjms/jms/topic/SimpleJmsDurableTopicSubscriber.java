@@ -23,12 +23,12 @@ import javax.jms.TopicSession;
 import org.apache.camel.Processor;
 import org.apache.camel.component.sjms.SimpleJmsEndpoint;
 import org.apache.camel.component.sjms.pool.SessionPool;
+import org.apache.camel.component.sjms.utils.StringUtils;
 
 /**
  *
  */
 public class SimpleJmsDurableTopicSubscriber extends SimpleJmsTopicSubscriber {
-    private String messageSelector;
     private MessageConsumer messageConsumer;
     private String subscriptionName;
     
@@ -43,10 +43,10 @@ public class SimpleJmsDurableTopicSubscriber extends SimpleJmsTopicSubscriber {
         SessionPool pool = getSimpleJmsEndpoint().getSessions();
         TopicSession topicSession = (TopicSession) pool.borrowObject();
         Topic topic = topicSession.createTopic(getSimpleJmsEndpoint().getDestinationName());
-        if (messageSelector == null || messageSelector.equals(""))
-            messageConsumer = topicSession.createDurableSubscriber(topic, subscriptionName);
+        if (StringUtils.isNotEmpty(getMessageSelector()))
+            messageConsumer = topicSession.createDurableSubscriber(topic, getMessageSelector(), getSubscriptionName(), true);
         else
-            messageConsumer = topicSession.createDurableSubscriber(topic, this.messageSelector, subscriptionName, true);
+            messageConsumer = topicSession.createDurableSubscriber(topic, getSubscriptionName());
         pool.returnObject(topicSession);
         messageConsumer.setMessageListener(createMessageListener());
         super.doStart();
@@ -57,5 +57,23 @@ public class SimpleJmsDurableTopicSubscriber extends SimpleJmsTopicSubscriber {
         super.doStop();
         if(messageConsumer != null)
             messageConsumer.close();   
+    }
+
+    /**
+     * Sets the String value of subscriptionName for this instance of SimpleJmsDurableTopicSubscriber.
+     *
+     * @param subscriptionName Sets String, default is TODO add default
+     */
+    public void setSubscriptionName(String subscriptionName) {
+        this.subscriptionName = subscriptionName;
+    }
+
+    /**
+     * Gets the String value of subscriptionName for this instance of SimpleJmsDurableTopicSubscriber.
+     *
+     * @return the subscriptionName
+     */
+    public String getSubscriptionName() {
+        return subscriptionName;
     }
 }

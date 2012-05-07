@@ -44,12 +44,14 @@ public class SimpleJmsQueueProducer extends SimpleJmsProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (logger.isDebugEnabled()) {
+            logger.info((String) exchange.getIn().getBody());
+        }
     	TextMessage textMessage = createTextMessage();
         textMessage.setText((String) exchange.getIn().getBody());
         QueueSender sender = producers.borrowObject();
-        producers.returnObject(sender);
         sender.send(textMessage);
-        logger.info((String) exchange.getIn().getBody());
+        producers.returnObject(sender);
     }
     
     private TextMessage createTextMessage() throws Exception {

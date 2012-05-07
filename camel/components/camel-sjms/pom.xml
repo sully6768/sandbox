@@ -30,13 +30,10 @@
         <version>2.10-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-simple-jms</artifactId>
+    <artifactId>camel-sjms</artifactId>
     <packaging>bundle</packaging>
-    <version>2.10-SNAPSHOT</version>
-
-    <name>A Camel Component</name>
-    <url>http://www.myorganization.org</url>
+    <name>Camel :: Simple JMS</name>
+    <description>A pure Java JMS Camel Component</description>
 
 
     <properties>
@@ -47,6 +44,9 @@
             org.apache.camel.*;${camel.osgi.import.camel.version},
             *
         </camel.osgi.import.pkg>
+        <camel.osgi.private.pkg>
+            org.apache.camel.component.sjms.utils
+        </camel.osgi.private.pkg>
     </properties>
     <dependencies>
     <!-- =============================== -->

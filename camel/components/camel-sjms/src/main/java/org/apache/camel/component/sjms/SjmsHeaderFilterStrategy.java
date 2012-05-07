@@ -21,9 +21,9 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 /**
  * @version 
  */
-public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class SjmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-    public JmsHeaderFilterStrategy() {
+    public SjmsHeaderFilterStrategy() {
         initialize();
     }
 

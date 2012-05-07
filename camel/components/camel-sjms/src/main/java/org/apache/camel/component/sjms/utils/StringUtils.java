@@ -11,27 +11,32 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.apache.camel.component.sjms.jms;
+package org.apache.camel.component.sjms.utils;
 
-import javax.jms.Session;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
- * Session acknowledge enum keys
- * 
+ * TODO Add Class documentation for StringUtils
+ *
  */
-public enum SessionAcknowledgementType {
-    AUTO_ACKNOWLEDGE(Session.AUTO_ACKNOWLEDGE), 
-    CLIENT_ACKNOWLEDGE(Session.CLIENT_ACKNOWLEDGE), 
-    DUPS_OK_ACKNOWLEDGE(Session.DUPS_OK_ACKNOWLEDGE), 
-    SESSION_TRANSACTED(Session.SESSION_TRANSACTED);
-    
-    private int intValue = -1;
-    
-    private SessionAcknowledgementType(int intValue) {
-        this.intValue = intValue;
+public class StringUtils {
+
+    public static boolean isEmpty(String value) {
+        return value != null && !value.equals("");
+    }
+
+    public static boolean isNotEmpty(String value) {
+        return ! isEmpty(value);
     }
     
-    public int intValue() {
-        return this.intValue;
+    public static boolean isValidUri(String uri) {
+        boolean answer = true;
+        try {
+            new URI(uri);
+        } catch (URISyntaxException e) {
+            answer = false;
+        }
+        return answer;
     }
 }

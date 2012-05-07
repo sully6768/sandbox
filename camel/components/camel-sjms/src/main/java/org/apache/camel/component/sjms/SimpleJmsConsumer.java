@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public abstract class SimpleJmsConsumer extends DefaultConsumer {
 
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
+    private String messageSelector;
 
     public SimpleJmsConsumer(SimpleJmsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -49,5 +50,23 @@ public abstract class SimpleJmsConsumer extends DefaultConsumer {
 
     protected SimpleJmsEndpoint getSimpleJmsEndpoint() {
         return (SimpleJmsEndpoint)this.getEndpoint();
+    }
+
+    /**
+     * Sets the String value of messageSelector for this instance of SimpleJmsTopicSubscriber.
+     *
+     * @param messageSelector Sets String, default is TODO add default
+     */
+    public void setMessageSelector(String messageSelector) {
+        this.messageSelector = messageSelector;
+    }
+
+    /**
+     * Gets the String value of messageSelector for this instance of SimpleJmsTopicSubscriber.
+     *
+     * @return the messageSelector
+     */
+    public String getMessageSelector() {
+        return messageSelector;
     }
 }

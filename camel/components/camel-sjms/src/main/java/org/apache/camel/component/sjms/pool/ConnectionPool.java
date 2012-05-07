@@ -1,6 +1,4 @@
 /*
- * Copyright 2012 FuseSource
- *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
@@ -15,10 +13,10 @@
  */
 package org.apache.camel.component.sjms.pool;
 
-import java.util.UUID;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+
+import org.apache.camel.component.sjms.utils.StringUtils;
 
 /**
  * TODO Add Class documentation for ConnectionPool
@@ -28,6 +26,7 @@ public class ConnectionPool extends ObjectPool<Connection> {
     private ConnectionFactory connectionFactory;
     private String username;
     private String password;
+    private String clientId;
 
     /**
      * TODO Add Constructor Javadoc
@@ -65,7 +64,8 @@ public class ConnectionPool extends ObjectPool<Connection> {
             }
         }
         if(connection != null) {
-            connection.setClientID(UUID.randomUUID().toString());
+            if(StringUtils.isNotEmpty(getClientId()))
+                connection.setClientID(getClientId());
             connection.start();
         }
         return connection;
@@ -117,5 +117,23 @@ public class ConnectionPool extends ObjectPool<Connection> {
      */
     public String getPassword() {
         return password;
+    }
+
+    /**
+     * Sets the String value of clientId for this instance of ConnectionPool.
+     *
+     * @param clientId Sets String, default is TODO add default
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    /**
+     * Gets the String value of clientId for this instance of ConnectionPool.
+     *
+     * @return the clientId
+     */
+    public String getClientId() {
+        return clientId;
     }
 }

@@ -34,6 +34,8 @@ public class SimpleJmsComponentConfiguration {
     private Integer maxProducers = 1;
 
     private boolean transacted = false;
+    
+    private String acknowledgementMode = "AUTO_ACKNOWLEDGE";
 
     private boolean durableSubscription = false;
 
@@ -46,8 +48,6 @@ public class SimpleJmsComponentConfiguration {
     private int messagePriority = 10;
 
     private long messageTimeToLive = -1;
-    
-    private String acknowledgementMode = "AUTO_ACKNOWLEDGE";
 
     /**
      * Gets the Integer value of maxConnections for this instance of

@@ -91,6 +91,10 @@ public abstract class ObjectPool<T> {
 	 */
 	protected abstract void destroyObject(T t) throws Exception;
 
+	/**
+	 * @return
+	 * @throws Exception
+	 */
 	public T borrowObject() throws Exception {
 		T t = null;
 		getLock().writeLock().lock();
@@ -102,10 +106,17 @@ public abstract class ObjectPool<T> {
 		return t;
 	}
 
+	/**
+	 * @param object
+	 * @throws Exception
+	 */
 	public void returnObject(T object) throws Exception {
 		this.objects.add(object);
 	}
 
+	/**
+	 * @return
+	 */
 	int size() {
 		return objects.size();
 	}

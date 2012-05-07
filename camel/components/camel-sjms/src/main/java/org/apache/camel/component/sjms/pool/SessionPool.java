@@ -16,7 +16,15 @@
 package org.apache.camel.component.sjms.pool;
 
 import javax.jms.Connection;
+import javax.jms.JMSException;
 import javax.jms.Session;
+import javax.jms.XAConnection;
+import javax.jms.XASession;
+import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAResource;
 
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 
@@ -29,6 +37,7 @@ public class SessionPool extends ObjectPool<Session> {
     private ConnectionPool connectionPool;
     private boolean transacted = false;
     private SessionAcknowledgementType acknowledgeMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
+    private TransactionManager transactionManager;
 
     /**
      * TODO Add Constructor Javadoc
@@ -42,44 +51,91 @@ public class SessionPool extends ObjectPool<Session> {
     /**
      * TODO Add Constructor Javadoc
      *
+     */
+    public SessionPool(int poolSize, ConnectionPool connectionPool, TransactionManager transactionManager) {
+        super(poolSize);
+        this.connectionPool = connectionPool;
+        this.transactionManager = transactionManager;
+    }
+
+    /**
+     * TODO Add Constructor Javadoc
+     *
      * @param poolSize
      */
     public SessionPool(int poolSize) {
         super(poolSize);
     }
-
+    
     @Override
     protected Session createObject() throws Exception {
         Session session = null;
         final Connection connection = getConnectionPool().borrowObject();
         if(connection != null) {
-            if(transacted) {
-                session = connection.createSession(transacted, Session.SESSION_TRANSACTED);
+            if (isXa()) {
+                try {
+                    XAConnection xaconn = (XAConnection) connection;
+                    transacted = true;
+                    acknowledgeMode = SessionAcknowledgementType.SESSION_TRANSACTED;
+                    session = (XASession) xaconn.createXASession();
+//                        session.setIgnoreClose(true);
+//                        setIsXa(true);
+//                        transactionManager.getTransaction().registerSynchronization(new Synchronization((XASession) session));
+//                        incrementReferenceCount();
+                    transactionManager.getTransaction().enlistResource(createXaResource((XASession) session));
+                } catch (RollbackException e) {
+                    final JMSException jmsException = new JMSException("Rollback Exception");
+                    jmsException.initCause(e);
+                    throw jmsException;
+                } catch (SystemException e) {
+                    final JMSException jmsException = new JMSException("System Exception");
+                    jmsException.initCause(e);
+                    throw jmsException;
+                }
+            } else if (isLocalTransaction()) {
+                session = connection.createSession(transacted, acknowledgeMode.intValue());
             } else {
-                switch (getAcknowledgeMode()) {
+                switch (acknowledgeMode) {
                 case CLIENT_ACKNOWLEDGE:
-                    session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
+                    session = connection.createSession(transacted, Session.CLIENT_ACKNOWLEDGE);
                     break;
                 case DUPS_OK_ACKNOWLEDGE:
-                    session = connection.createSession(false, Session.DUPS_OK_ACKNOWLEDGE);
+                    session = connection.createSession(transacted, Session.DUPS_OK_ACKNOWLEDGE);
                     break;
                 case AUTO_ACKNOWLEDGE:
-                    session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+                    session = connection.createSession(transacted, Session.AUTO_ACKNOWLEDGE);
                 default:
                     break;
                 }
             }
-            getConnectionPool().returnObject(connection);
         }
+        getConnectionPool().returnObject(connection);
         return session;
+    }
+
+    private boolean isXa() throws Exception {
+        return (transactionManager != null && transactionManager.getStatus() != Status.STATUS_NO_TRANSACTION);
+    }
+
+    private boolean isLocalTransaction() {
+        return (transactionManager == null && this.transacted);
     }
     
     @Override
     protected void destroyObject(Session session) throws Exception {
+     // lets reset the session
+        session.setMessageListener(null);
+
+        if (transacted && !isXa()) {
+            try {
+                session.rollback();
+            } catch (JMSException e) {
+                logger.warn("Caught exception trying rollback() when putting session back into the pool, will invalidate. " + e, e);
+            }
+        }
         if (session != null) {
-            if(transacted)
-                session.commit();
             session.close();
+            session = null;
         }
     }
 
@@ -127,4 +183,31 @@ public class SessionPool extends ObjectPool<Session> {
     public ConnectionPool getConnectionPool() {
         return connectionPool;
     }
+
+    protected XAResource createXaResource(XASession session) throws JMSException {
+        return session.getXAResource();
+    }
+    
+    
+//    protected class Synchronization implements javax.transaction.Synchronization {
+//        private final XASession session;
+//
+//        private Synchronization(XASession session) {
+//            this.session = session;
+//        }
+//
+//        public void beforeCompletion() {
+//        }
+//        
+//        public void afterCompletion(int status) {
+//            try {
+//                // This will return session to the pool.
+//                session.setIgnoreClose(false);
+//                session.close();
+//                session.setIsXa(false);
+//            } catch (JMSException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+//    }
 }
