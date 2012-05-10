@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>karaf</artifactId>
-        <version>2.2.7</version>
+        <version>2.2.5</version>
     </parent>
 
     <groupId>org.apache.karaf.scr</groupId>
@@ -36,7 +36,10 @@
     <properties>
         <scr.packages></scr.packages>
         <felix.scr.version>1.6.0</felix.scr.version>
-        <felix.scr.annotation.version>1.6.0</felix.scr.annotation.version>
+        <bndlib.version>1.50.0</bndlib.version>
+        <felix.metatype.version>1.0.4</felix.metatype.version>
+        <jline.version>2.5</jline.version>
+        <jansi.version>1.7</jansi.version>
         <felix.scr.plugin.version>1.7.2</felix.scr.plugin.version>
         <appendedResourcesDirectory>${basedir}/../etc/appended-resources</appendedResourcesDirectory>
     </properties>
@@ -53,27 +56,17 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.scr</artifactId>
-                <version>1.6.0</version>
+                <version>${felix.scr.version}</version>
             </dependency>
             <dependency>
                 <groupId>biz.aQute</groupId>
                 <artifactId>bndlib</artifactId>
-                <version>1.50.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.scr</artifactId>
-                <version>${felix.scr.version}</version>
+                <version>${bndlib.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.metatype</artifactId>
                 <version>${felix.metatype.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.scr.annotations</artifactId>
-                <version>${felix.scr.annotation.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.command.completer;
+package org.apache.karaf.scr.management;
 
-import org.apache.felix.scr.Component;
+public interface ScrServiceMBean {
+    String[] listComponents() throws Exception;
 
-/**
- * 
- */
-public class DetailsCompleter extends ScrCompleterSupport {
+    boolean isComponentActive(String componentName) throws Exception;
+    
+    int componentState(String componentName) throws Exception;
 
-    /**
-     * Overrides the super method noted below. See super documentation for
-     * details.
-     * 
-     * @see org.apache.karaf.ds.command.completer.ScrCompleterSupport#availableComponent(org.apache.felix.scr.Component)
-     */
-    @Override
-    public boolean availableComponent(Component component) throws Exception {
-        return (component != null);
-    }
+    void activateComponent(String componentName) throws Exception;
 
+    void deactiveateComponent(String componentName) throws Exception;
 }

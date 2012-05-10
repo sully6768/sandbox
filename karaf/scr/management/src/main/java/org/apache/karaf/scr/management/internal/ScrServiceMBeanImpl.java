@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.ds.management.internal;
+package org.apache.karaf.scr.management.internal;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,24 +27,20 @@ import javax.management.StandardMBean;
 
 import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Deactivate;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.karaf.ds.management.ScrServiceMBean;
 import org.apache.karaf.management.MBeanRegistrer;
+import org.apache.karaf.scr.management.ScrServiceMBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
-@org.apache.felix.scr.annotations.Component(
-        name = ScrServiceMBeanImpl.COMPONENT_NAME, 
-        label = ScrServiceMBeanImpl.COMPONENT_LABEL, 
-        enabled = true, 
+import aQute.bnd.annotation.component.Activate;
+import aQute.bnd.annotation.component.Deactivate;
+import aQute.bnd.annotation.component.Reference;
+
+@aQute.bnd.annotation.component.Component(
+        name = ScrServiceMBeanImpl.COMPONENT_NAME,
+        enabled = true,
         immediate = true)
-public class ScrServiceMBeanImpl extends StandardMBean implements
-        ScrServiceMBean {
+public class ScrServiceMBeanImpl extends StandardMBean implements ScrServiceMBean {
 
     public static final String COMPONENT_NAME = "ScrServiceMBean";
 
@@ -52,10 +48,8 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ScrServiceMBeanImpl.class);
 
-    @Reference
     private MBeanServer mBeanServer;
 
-    @Reference
     private ScrService scrService;
 
     private MBeanRegistrer mBeanRegistrer;
@@ -71,25 +65,37 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
         super(ScrServiceMBean.class);
     }
 
+    /**
+     * Service component activation call back.  Called when all dependencies are satisfied.
+     *  
+     * @throws Exception
+     */
     @Activate
     public void activate() throws Exception {
-        LOGGER.info("Activating the " + getComponentLabel());
+        LOGGER.info("Activating the " + COMPONENT_LABEL);
         Map<Object, String> mbeans = new HashMap<Object, String>();
-        String karafName = System.getProperty("karaf.name", "root");
-        mbeans.put(this, "org.apache.karaf:type=scr,name=" + karafName);
+        mbeans.put(this, "org.apache.karaf:type=scr,name=${karaf.name}");
         try {
             lock.writeLock().lock();
             mBeanRegistrer = new MBeanRegistrer();
             mBeanRegistrer.setMbeans(mbeans);
             mBeanRegistrer.registerMBeanServer(mBeanServer);
+        } catch (Exception e) {
+            LOGGER.error("Exception registering the SCR Management MBean: " + e.getLocalizedMessage(), e);
         } finally {
             lock.writeLock().unlock();
         }
     }
 
+    /**
+     * Service component deactivation call back.  Called after the component is in an active 
+     * state when any dependencies become unsatisfied.
+     *  
+     * @throws Exception
+     */
     @Deactivate
     public void deactivate() throws Exception {
-        LOGGER.info("Deactivating the " + getComponentLabel());
+        LOGGER.info("Deactivating the " + COMPONENT_LABEL);
         try {
             lock.writeLock().lock();
             mBeanRegistrer.unregisterMBeanServer(mBeanServer);
@@ -99,10 +105,6 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
         }
     }
 
-    /**
-     * 
-     * @see org.apache.karaf.ds.management.ScrServiceMBean#listComponents()
-     */
     public String[] listComponents() throws Exception {
         Component[] components = safe(scrService.getComponents());
         String[] componentNames = new String[components.length];
@@ -111,53 +113,74 @@ public class ScrServiceMBeanImpl extends StandardMBean implements
         }
         return componentNames;
     }
+
+    public boolean isComponentActive(String componentName) throws Exception {
+        return (componentState(componentName) == Component.STATE_ACTIVE)?true:false;
+    }
     
-    /**
-     * 
-     * @see org.apache.karaf.ds.management.ScrServiceMBean#componentState(java.lang.String)
-     */
     public int componentState(String componentName) throws Exception {
         int state = -1;
-        Component[] components = scrService.getComponents(componentName);
-        for (Component component : safe(components)) {
+        final Component component = findComponent(componentName);
+        if(component != null)
             state = component.getState();
-        }
+        else
+            LOGGER.warn("No component found for name: " + componentName);
         return state;
     }
 
-    /**
-     * 
-     * @see org.apache.karaf.ds.management.ScrServiceMBean#activateComponent(java.lang.String)
-     */
     public void activateComponent(String componentName) throws Exception {
-        if (scrService.getComponents(componentName) != null) {
-            Component[] components = scrService.getComponents(componentName);
-            for (Component component : safe(components)) {
-                component.enable();
-            }
-        }
+        final Component component = findComponent(componentName);
+        if(component != null)
+            component.enable();
+        else
+            LOGGER.warn("No component found for name: " + componentName);
     }
 
-    /**
-     * 
-     * @see org.apache.karaf.ds.management.ScrServiceMBean#deactiveateComponent(java.lang.String)
-     */
     public void deactiveateComponent(String componentName) throws Exception {
+        final Component component = findComponent(componentName);
+        if(component != null)
+            component.disable();
+        else
+            LOGGER.warn("No component found for name: " + componentName);
+    }
+    
+    private Component findComponent(String componentName) {
+        Component answer = null;
         if (scrService.getComponents(componentName) != null) {
             Component[] components = scrService.getComponents(componentName);
             for (Component component : safe(components)) {
-                component.disable();
+                answer = component;
             }
         }
+        return answer;
     }
     
     private Component[] safe( Component[] components ) {
         return components == null ? new Component[0] : components;
     }
 
-    
-    private String getComponentLabel() {
-        return COMPONENT_LABEL;
+	/**
+	 * @param mBeanServer the mBeanServer to set
+	 */
+    @Reference
+	public void setmBeanServer(MBeanServer mBeanServer) {
+		this.mBeanServer = mBeanServer;
+	}
+	
+    public void unsetmBeanServer(MBeanServer mBeanServer) {
+        this.mBeanServer = null;
+    }
+
+	/**
+	 * @param scrService the scrService to set
+	 */
+	@Reference
+	public void setScrService(ScrService scrService) {
+		this.scrService = scrService;
+	}
+	
+    public void unsetScrService(ScrService scrService) {
+        this.scrService = null;
     }
 
 }

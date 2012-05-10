@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf.scr</groupId>
         <artifactId>scr</artifactId>
-        <version>2.2.7</version>
+        <version>2.2.5</version>
     </parent>
 
     <artifactId>org.apache.karaf.scr.management</artifactId>
@@ -33,7 +33,7 @@
     <description>This bundle provides MBeans to manipulate Service Components via JMX.</description>
 
     <properties>
-        <scr.packages>OSGI-INF/serviceComponents.xml</scr.packages>
+        <scr.packages>*</scr.packages>
     </properties>
 
     <dependencies>
@@ -58,8 +58,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.scr.annotations</artifactId>
+            <groupId>biz.aQute</groupId>
+            <artifactId>bndlib</artifactId>
+            <version>1.50.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -107,19 +108,6 @@
                         <Service-Component>${scr.packages}</Service-Component>
                     </instructions>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-scr-plugin</artifactId>
-                <version>${felix.scr.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-scr-scrdescriptor</id>
-                        <goals>
-                            <goal>scr</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
